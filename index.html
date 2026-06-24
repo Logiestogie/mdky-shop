@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Auto-reload the whole page every 10 minutes to pick up new deploys from Netlify -->
 <meta http-equiv="refresh" content="600">
-<title>Murphy Door KY — Shop Dashboard</title>
+<title>Murphy Door KY â Shop Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -120,7 +120,7 @@
     <span id="liveDot" title="Live feed status"></span>
     <div>
       <div id="clock">--:--</div>
-      <div id="dateline">—</div>
+      <div id="dateline">â</div>
     </div>
   </div>
 </header>
@@ -146,14 +146,14 @@ const CONFIG = {
       numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv"
     },
     pollMinutes: 5,
-    headcount: 18,        // normal headcount is 18 — set to 16 today (2 call-ins)
+    headcount: 18,        // normal headcount is 18 â set to 16 today (2 call-ins)
     rpeGoal: 4000         // daily RPE goal
   },
 
-  /* Live data lands here — zeros until the feed connects */
+  /* Live data lands here â zeros until the feed connects */
   today: { doorsShipped: 0, revenue: 0 },
 
-  /* Paint priorities — refreshed nightly from the Trello Paint/Stain list
+  /* Paint priorities â refreshed nightly from the Trello Paint/Stain list
      during the EOD run, sorted RUSH/overdue first. Empty = panel skipped. */
   paint: [
     {"order": "93373", "customer": "Schuppi 42-1\"", "finish": "Stain - Burnt Coal", "due": "6/17", "status": "rush"},
@@ -238,18 +238,18 @@ const CONFIG = {
     {"order": "92819A", "customer": "Stricklin 40\" PG Mid-Century", "dept": "Paint/Stain", "status": "rush"}
   ],
 
-  // Active KY warranty orders — updated nightly with the EOD run
+  // Active KY warranty orders â updated nightly with the EOD run
   warranties: [
     { order: "93297 / 89818",       issue: "Right side refreshment cab door, crown entablature & threshold damaged", dept: "Build",     status: "inprogress" },
     { order: "93347 / PO#39701299", issue: "Missing lock bar for mechanical key lock",                               dept: "Packaging", status: "inprogress" },
-    { order: "93373 / 71293A",      issue: "Door warped — replacement carcass (aged, get it out)",                   dept: "Build",     status: "rush"       },
-    { order: "93374 / 91204",       issue: "Door delivered damaged — carcass & top jamb",                            dept: "Build",     status: "inprogress" }
+    { order: "93373 / 71293A",      issue: "Door warped â replacement carcass (aged, get it out)",                   dept: "Build",     status: "rush"       },
+    { order: "93374 / 91204",       issue: "Door delivered damaged â carcass & top jamb",                            dept: "Build",     status: "inprogress" }
   ],
 
   ticker: [
-    "RPE goal: <b>$4,000/day</b> — every order counts",
-    "RUSH orders jump the line — check the board before starting your next build",
-    "Re-cut prevention is this month's focus — measure twice, cut once",
+    "RPE goal: <b>$4,000/day</b> â every order counts",
+    "RUSH orders jump the line â check the board before starting your next build",
+    "Re-cut prevention is this month's focus â measure twice, cut once",
     "Keep paperwork with the unit at all times",
     "Safety first: clear walkways, glasses on at every machine"
   ]
@@ -321,7 +321,7 @@ function paintPanel(){
     </tr>`).join("");
   const more = CONFIG.paint.length > MAX
     ? `<div class="more-note">+ ${CONFIG.paint.length - MAX} more in queue</div>` : "";
-  return `<h2>Paint / Stain — today's order of attack</h2>
+  return `<h2>Paint / Stain â today's order of attack</h2>
     <table>
       <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -339,7 +339,7 @@ function buildingPanel(){
     </tr>`).join("");
   const more = CONFIG.building.length > MAX
     ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : "";
-  return `<h2>Sanding / Assembly — today's order of attack</h2>
+  return `<h2>Sanding / Assembly â today's order of attack</h2>
     <table>
       <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -354,7 +354,7 @@ function warrantyPanel(){
   const rows = CONFIG.warranties.map(w=>`<tr>
       <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
     </tr>`).join("");
-  return `<h2>Active KY warranties — keep these moving</h2>
+  return `<h2>Active KY warranties â keep these moving</h2>
     <table>
       <thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -442,9 +442,9 @@ setInterval(pollLive, CONFIG.live.pollMinutes * 60 * 1000);
 
 /* Ticker */
 document.getElementById("ticker").innerHTML =
-  CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;"+t).join("");
+  CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;â¢&nbsp;&nbsp;&nbsp;"+t).join("");
 
-/* Keep the screen awake — the page itself asks the device not to sleep.
+/* Keep the screen awake â the page itself asks the device not to sleep.
    Works in Chromium-based browsers (incl. Silk). Re-acquires on tab focus
    and survives the 10-min page reload since it runs on every load. */
 async function keepAwake(){
@@ -464,9 +464,9 @@ keepAwake();
 function tick(){
   const now = new Date();
   document.getElementById("clock").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"});
   document.getElementById("dateline").textContent =
-    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",timeZone:"America/New_York"});
 }
 tick(); setInterval(tick,1000);
 </script>
