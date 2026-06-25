@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Auto-reload the whole page every 10 minutes to pick up new deploys from Netlify -->
 <meta http-equiv="refresh" content="600">
-<title>Murphy Door KY — Shop Dashboard</title>
+<title>Murphy Door KY â Shop Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -120,7 +120,7 @@
     <span id="liveDot" title="Live feed status"></span>
     <div>
       <div id="clock">--:--</div>
-      <div id="dateline">—</div>
+      <div id="dateline">â</div>
     </div>
   </div>
 </header>
@@ -146,28 +146,110 @@ const CONFIG = {
       numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv"
     },
     pollMinutes: 5,
-    headcount: 18,        // normal headcount is 18 — set to 16 today (2 call-ins)
+    headcount: 16,        // normal headcount is 18 â set to 16 today (2 call-ins)
     rpeGoal: 4000         // daily RPE goal
   },
 
-  /* Live data lands here — zeros until the feed connects */
+  /* Live data lands here â zeros until the feed connects */
   today: { doorsShipped: 0, revenue: 0 },
 
-  /* Paint priorities — refreshed nightly from the Trello Paint/Stain list
+  /* Paint priorities â refreshed nightly from the Trello Paint/Stain list
      during the EOD run, sorted RUSH/overdue first. Empty = panel skipped. */
-  paint: [{"order":"93373","customer":"Schuppi 42-1\"","finish":"Stain — Burnt Coal","due":"6/17","status":"rush"},{"order":"93392","customer":"Loebl 36\" PG Archway","finish":"Stain — Walnut","due":"6/18","status":"rush"},{"order":"93078A","customer":"Shelstad Maple Shaker Face Panels","finish":"Stain — Clear","due":"6/19","status":"rush"},{"order":"93525A","customer":"Bruni PG Valance Cover","finish":"Paint — White","due":"6/24","status":"rush"},{"order":"92819A","customer":"Stricklin 40\" PG Mid-Century","finish":"Paint — Black","due":"6/29","status":"rush"},{"order":"93301","customer":"Grider 54\" Alder French Cherry w/Mirror Back NC","finish":"—","due":"7/29","status":"rush"},{"order":"93923","customer":"Potocki 36\" PG Lipped Shelf","finish":"Paint — White","due":"7/1","status":""},{"order":"92058A","customer":"Legatt 47-1\" PG 6-9/16\" Jamb INSIWNG Benjamin Moore Swiss Coffee OC-45 w/Flat Back MN","finish":"—","due":"7/6","status":""},{"order":"93267","customer":"SCHMERTZLER 20\" Maple Murphy Shelf","finish":"Stain — Walnut","due":"7/15","status":""},{"order":"92151","customer":"King 32\" PG Hutch","finish":"Paint — White","due":"7/15","status":""},{"order":"92725","customer":"Rowe 36\" PG Refreshment","finish":"Paint — Black","due":"7/17","status":""},{"order":"92845","customer":"Conran 68\" PG Surface Mount French V2","finish":"Stain — Walnut","due":"7/20","status":""},{"order":"92893","customer":"Sutton 32\" PG Refreshment","finish":"Stain — Natural","due":"7/22","status":""},{"order":"92997","customer":"Adams 36\" PG","finish":"Paint — Black","due":"7/22","status":""},{"order":"93076","customer":"Beck 34\" PG Refreshment","finish":"Paint — Black","due":"7/23","status":""},{"order":"93172","customer":"Roberts 36\" PG Hutch","finish":"Primed (RTS)","due":"7/27","status":""},{"order":"93265","customer":"Mgrdichian 30\" PG 12\" Mirror Gun Door","finish":"Paint — White","due":"7/28","status":""},{"order":"93261","customer":"Knowles 44\" Maple Surface Mount","finish":"Stain — Medium","due":"7/29","status":""},{"order":"93287","customer":"Miller 24\" Red Oak","finish":"Stain — Medium","due":"7/29","status":""},{"order":"93510B","customer":"Crossett 36\" PG","finish":"Paint — Black","due":"7/29","status":""},{"order":"93401","customer":"Badrinathan Twin Horizontal Shaker Alder","finish":"Stain — Medium","due":"7/31","status":""},{"order":"93557A","customer":"Melbourn 30\" PG Mirror 6-1/2\" Deep","finish":"Paint — White","due":"8/4","status":""},{"order":"93521","customer":"Menegus 44\" PG Surface Mount","finish":"Paint — Black","due":"8/4","status":""},{"order":"93524","customer":"Shiner 72\"","finish":"Stain — Burnt Coal","due":"8/4","status":""},{"order":"93637","customer":"Odell Horizontal","finish":"Stain — Walnut","due":"8/5","status":""},{"order":"93579","customer":"Pugh 56\" PG French","finish":"Paint — Black","due":"8/5","status":""},{"order":"93593A","customer":"Jansen 69-.5\" PG French","finish":"Paint — White","due":"8/5","status":""},{"order":"93662","customer":"Walker 48-1\" PG","finish":"Paint — Black","due":"8/6","status":""},{"order":"93624","customer":"Buttorff  36\" PG Seamless Panel","finish":"Primer Only","due":"8/6","status":""},{"order":"93691","customer":"Hill 27\"","finish":"Stain — Walnut","due":"8/7","status":""},{"order":"92722A","customer":"Wilczak 30\" PG Refreshment","finish":"Paint — Black","due":"8/7","status":""},{"order":"93709","customer":"Hurst 38\" W. Oak Pool Cue","finish":"Stain — Natural","due":"8/7","status":""},{"order":"93794","customer":"Orifici 24\" PG","finish":"Paint — Black","due":"8/10","status":""},{"order":"93792","customer":"Carson 36\" PG","finish":"Paint — White","due":"8/10","status":""},{"order":"93742","customer":"Watson 20\" PG Murphy Shelf","finish":"Paint — Black","due":"8/10","status":""},{"order":"93885","customer":"Wittbrodt 44\" PG Surface Mount","finish":"Paint — Black","due":"8/11","status":""},{"order":"93856","customer":"Sieiro 32\" PG","finish":"Paint — White","due":"8/11","status":""}],
+  paint: [
+    {"order": "93373", "customer": "Schuppi", "finish": "Stain - Burnt Coal", "due": "6/17", "status": "rush"},
+    {"order": "93078A", "customer": "Shelstad", "finish": "Stain - Clear", "due": "6/19", "status": "rush"},
+    {"order": "93297", "customer": "Raynor", "finish": "Paint - White", "due": "6/23", "status": "rush"},
+    {"order": "93525A", "customer": "Bruni", "finish": "Paint - White", "due": "6/24", "status": "rush"},
+    {"order": "93681A", "customer": "Brashear", "finish": "Paint - Black", "due": "6/25", "status": "rush"},
+    {"order": "92819A", "customer": "Stricklin", "finish": "Paint - Black", "due": "6/29", "status": "rush"},
+    {"order": "93301", "customer": "Grider", "finish": "-", "due": "7/29", "status": "rush"},
+    {"order": "93516A", "customer": "Vall", "finish": "Paint - White", "due": "7/29", "status": "rush"},
+    {"order": "92934", "customer": "Gomez", "finish": "Stain - Walnut", "due": "6/18", "status": "overdue"},
+    {"order": "93279", "customer": "Ackley", "finish": "Paint - White", "due": "6/23", "status": ""},
+    {"order": "92058A", "customer": "Legatt", "finish": "-", "due": "7/6", "status": ""},
+    {"order": "93267", "customer": "SCHMERTZLER", "finish": "Stain - Walnut", "due": "7/15", "status": ""},
+    {"order": "92151", "customer": "King", "finish": "Paint - Black", "due": "7/15", "status": ""},
+    {"order": "92558", "customer": "Sheehan", "finish": "Stain - Walnut", "due": "7/16", "status": ""},
+    {"order": "92683A", "customer": "Standley", "finish": "Paint - Black", "due": "7/16", "status": ""},
+    {"order": "92725", "customer": "Rowe", "finish": "Stain - Natural", "due": "7/17", "status": ""},
+    {"order": "92845", "customer": "Conran", "finish": "Stain - Walnut", "due": "7/20", "status": ""},
+    {"order": "92842", "customer": "Name", "finish": "Stain - Walnut", "due": "7/20", "status": ""},
+    {"order": "91877A", "customer": "McMackin", "finish": "Stain - Walnut", "due": "7/20", "status": ""},
+    {"order": "92893", "customer": "Sutton", "finish": "Stain - Natural", "due": "7/22", "status": ""},
+    {"order": "92997", "customer": "Adams", "finish": "Paint - Black", "due": "7/22", "status": ""},
+    {"order": "93076", "customer": "Beck", "finish": "Stain - Natural", "due": "7/23", "status": ""},
+    {"order": "93172", "customer": "Roberts", "finish": "Primed (RTS)", "due": "7/27", "status": ""},
+    {"order": "93104", "customer": "Gregory", "finish": "Stain - Walnut", "due": "7/27", "status": ""},
+    {"order": "93265", "customer": "Mgrdichian", "finish": "Paint - White", "due": "7/28", "status": ""},
+    {"order": "92869", "customer": "Kurfees", "finish": "Paint - Black", "due": "7/28", "status": ""},
+    {"order": "89657E", "customer": "Sightler", "finish": "Primer Only", "due": "7/28", "status": ""},
+    {"order": "93261", "customer": "Koowles", "finish": "Stain - Medium", "due": "7/29", "status": ""},
+    {"order": "93287", "customer": "Miller", "finish": "Stain - Medium", "due": "7/29", "status": ""},
+    {"order": "93510B", "customer": "Crossett", "finish": "Paint - Black", "due": "7/29", "status": ""},
+    {"order": "93426", "customer": "Rogers", "finish": "Stain - Walnut", "due": "7/31", "status": ""},
+    {"order": "93401", "customer": "Badrinathan", "finish": "Stain - Medium", "due": "7/31", "status": ""},
+    {"order": "93467", "customer": "Lardinois", "finish": "Stain - Clear", "due": "8/3", "status": ""},
+    {"order": "93557A", "customer": "Melbourn", "finish": "Paint - White", "due": "8/4", "status": ""},
+    {"order": "93521", "customer": "Menegus", "finish": "Paint - Black", "due": "8/4", "status": ""},
+    {"order": "93524", "customer": "Shiner", "finish": "Stain - Burnt Coal", "due": "8/4", "status": ""},
+    {"order": "93582", "customer": "Fryer", "finish": "Paint - Black", "due": "8/5", "status": ""},
+    {"order": "93586", "customer": "OCONNOR", "finish": "Stain - Walnut", "due": "8/5", "status": ""},
+    {"order": "93593A", "customer": "Jansen", "finish": "Paint - White", "due": "8/5", "status": ""},
+    {"order": "93612", "customer": "Gergets", "finish": "Paint - White", "due": "8/5", "status": ""},
+    {"order": "93624", "customer": "Buttorff", "finish": "Primer Only", "due": "8/6", "status": ""},
+    {"order": "92722A", "customer": "Wilczak", "finish": "Stain - Natural", "due": "8/7", "status": ""},
+    {"order": "93709", "customer": "Hurst", "finish": "Stain - Natural", "due": "8/7", "status": ""},
+    {"order": "93742", "customer": "Watson", "finish": "Paint - Black", "due": "8/10", "status": ""}
+  ],
 
-  building: [{"order":"Rush","customer":"warranty cabinet","dept":"Assembly","doors":1,"due":"6/19","status":"rush"},{"order":"93681A","customer":"Brashear 30\" PG Top Jamb and Threshold","dept":"Assembly","doors":1,"due":"6/25","status":"rush"},{"order":"93516A","customer":"Vall 30-1\" PG","dept":"Assembly","doors":1,"due":"7/29","status":"rush"},{"order":"92131","customer":"Mckinney 56\" PG Murphy Shelf","dept":"Assembly","doors":1,"due":"6/15","status":"overdue"},{"order":"93891","customer":"Bunting 32\" PG Ready to Ship","dept":"Assembly","doors":1,"due":"6/30","status":""},{"order":"92613","customer":"Wilson 56\"","dept":"Assembly","doors":1,"due":"7/15","status":""},{"order":"92558","customer":"Sheehan 30-1\"","dept":"Assembly","doors":1,"due":"7/16","status":""},{"order":"92683A","customer":"Standley 36\" PG Hutch","dept":"Assembly","doors":1,"due":"7/16","status":""},{"order":"93880","customer":"Cary 32\" PG","dept":"Assembly","doors":1,"due":"7/21","status":""},{"order":"93848","customer":"Dudden 30\" PG","dept":"Assembly","doors":1,"due":"7/21","status":""},{"order":"93776A","customer":"Wetmore 36\" W. Oak Surface Mount","dept":"Assembly","doors":1,"due":"7/21","status":""},{"order":"93921","customer":"Beagan 24\" PG","dept":"Assembly","doors":1,"due":"7/22","status":""},{"order":"28558002","customer":"Abend 28\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"8/3","status":""},{"order":"93612","customer":"Gergets 36\" PG Mid-Century","dept":"Assembly","doors":1,"due":"8/5","status":""},{"order":"93582","customer":"Fryer 36\" PG Mid-Century","dept":"Assembly","doors":1,"due":"8/5","status":""},{"order":"93586","customer":"OCONNOR 30\" PG Archway","dept":"Assembly","doors":1,"due":"8/5","status":""},{"order":"93808","customer":"Pescaello 33\" PG","dept":"Assembly","doors":1,"due":"8/11","status":""},{"order":"93796B","customer":"DiLazzaro 33-1\" PG","dept":"Assembly","doors":1,"due":"8/11","status":""},{"order":"93855","customer":"Bittner 32\" PG Archway","dept":"Assembly","doors":1,"due":"8/11","status":""},{"order":"93760","customer":"Swick 33-1\" PG","dept":"Assembly","doors":1,"due":"8/11","status":""}],
+  building: [
+    {"order": "93392", "customer": "Loebl", "dept": "Assembly", "doors": 1, "due": "6/18", "status": "rush"},
+    {"order": "92826B", "customer": "Larson", "dept": "Sanding", "doors": 1, "due": "6/25", "status": "rush"},
+    {"order": "93784B", "customer": "Landman", "dept": "Sanding", "doors": 2, "due": "6/29", "status": "rush"},
+    {"order": "93236", "customer": "Neel", "dept": "Sanding", "doors": 1, "due": "7/1", "status": "rush"},
+    {"order": "93502", "customer": "Cook", "dept": "Assembly", "doors": 1, "due": "6/29", "status": ""},
+    {"order": "93783", "customer": "Lampugnale", "dept": "Sanding", "doors": 1, "due": "6/29", "status": ""},
+    {"order": "93759", "customer": "Miller", "dept": "Sanding", "doors": 1, "due": "6/29", "status": ""},
+    {"order": "93782", "customer": "Vincent", "dept": "Sanding", "doors": 1, "due": "6/29", "status": ""},
+    {"order": "93779", "customer": "Sutton", "dept": "Sanding", "doors": 1, "due": "6/29", "status": ""},
+    {"order": "92456", "customer": "Bolduc", "dept": "Assembly", "doors": 1, "due": "7/10", "status": ""},
+    {"order": "93725C", "customer": "Yoder", "dept": "Sanding", "doors": 2, "due": "7/13", "status": ""},
+    {"order": "92668", "customer": "Kim", "dept": "Assembly", "doors": 2, "due": "7/16", "status": ""},
+    {"order": "92801A", "customer": "Sanderlin", "dept": "Assembly", "doors": 1, "due": "7/20", "status": ""},
+    {"order": "93774", "customer": "Lentner", "dept": "Sanding", "doors": 1, "due": "7/20", "status": ""},
+    {"order": "92863", "customer": "Patel", "dept": "Assembly", "doors": 1, "due": "7/21", "status": ""},
+    {"order": "93134", "customer": "Doolos", "dept": "Sanding", "doors": 1, "due": "7/27", "status": ""},
+    {"order": "93233A", "customer": "Calderone", "dept": "Assembly", "doors": 1, "due": "7/29", "status": ""},
+    {"order": "28558002", "customer": "Abend", "dept": "Assembly", "doors": 1, "due": "8/3", "status": ""},
+    {"order": "93679", "customer": "Peeler", "dept": "Sanding", "doors": 1, "due": "8/7", "status": ""},
+    {"order": "93672", "customer": "Randolph", "dept": "Sanding", "doors": 1, "due": "8/7", "status": ""},
+    {"order": "93671B", "customer": "Godfrey", "dept": "Sanding", "doors": 1, "due": "8/10", "status": ""},
+    {"order": "93763", "customer": "DeGolyer", "dept": "Sanding", "doors": 1, "due": "8/10", "status": ""}
+  ],
 
-  priorities: [{"order":"93373","customer":"Schuppi 42-1\"","dept":"Paint/Stain","status":"rush"},{"order":"93392","customer":"Loebl 36\" PG Archway","dept":"Paint/Stain","status":"rush"},{"order":"Rush","customer":"warranty cabinet","dept":"Assembly","status":"rush"},{"order":"93078A","customer":"Shelstad Maple Shaker Face Panels","dept":"Paint/Stain","status":"rush"},{"order":"93525A","customer":"Bruni PG Valance Cover","dept":"Paint/Stain","status":"rush"},{"order":"93681A","customer":"Brashear 30\" PG Top Jamb and Threshold","dept":"Assembly","status":"rush"},{"order":"92819A","customer":"Stricklin 40\" PG Mid-Century","dept":"Paint/Stain","status":"rush"},{"order":"93516A","customer":"Vall 30-1\" PG","dept":"Assembly","status":"rush"}],
+  priorities: [
+    {"order": "93284", "customer": "Buck", "dept": "QA", "status": "rush"},
+    {"order": "93373", "customer": "Schuppi", "dept": "Paint/Stain", "status": "rush"},
+    {"order": "93392", "customer": "Loebl", "dept": "Assembly", "status": "rush"},
+    {"order": "93228", "customer": "Demarco", "dept": "QA", "status": "rush"},
+    {"order": "93078A", "customer": "Shelstad", "dept": "Paint/Stain", "status": "rush"},
+    {"order": "93508", "customer": "Sotis", "dept": "QA", "status": "rush"},
+    {"order": "93577", "customer": "Marquardt", "dept": "QA", "status": "rush"},
+    {"order": "93297", "customer": "Raynor", "dept": "Paint/Stain", "status": "rush"}
+  ],
 
-  // Active KY warranty orders — updated nightly with the EOD run
-  warranties: [],
+  // Active KY warranty orders â updated nightly with the EOD run
+  warranties: [
+    { order: "93297 / 89818",       issue: "Right side refreshment cab door, crown entablature & threshold damaged", dept: "Build",     status: "inprogress" },
+    { order: "93347 / PO#39701299", issue: "Missing lock bar for mechanical key lock",                               dept: "Packaging", status: "inprogress" },
+    { order: "93373 / 71293A",      issue: "Door warped â replacement carcass (aged, get it out)",                   dept: "Build",     status: "rush"       },
+    { order: "93374 / 91204",       issue: "Door delivered damaged â carcass & top jamb",                            dept: "Build",     status: "inprogress" }
+  ],
 
   ticker: [
-    "RPE goal: <b>$4,000/day</b> — every order counts",
-    "RUSH orders jump the line — check the board before starting your next build",
-    "Re-cut prevention is this month's focus — measure twice, cut once",
+    "RPE goal: <b>$4,000/day</b> â every order counts",
+    "RUSH orders jump the line â check the board before starting your next build",
+    "Re-cut prevention is this month's focus â measure twice, cut once",
     "Keep paperwork with the unit at all times",
     "Safety first: clear walkways, glasses on at every machine"
   ]
@@ -239,7 +321,7 @@ function paintPanel(){
     </tr>`).join("");
   const more = CONFIG.paint.length > MAX
     ? `<div class="more-note">+ ${CONFIG.paint.length - MAX} more in queue</div>` : "";
-  return `<h2>Paint / Stain — today's order of attack</h2>
+  return `<h2>Paint / Stain â today's order of attack</h2>
     <table>
       <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -257,7 +339,7 @@ function buildingPanel(){
     </tr>`).join("");
   const more = CONFIG.building.length > MAX
     ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : "";
-  return `<h2>Sanding / Assembly — today's order of attack</h2>
+  return `<h2>Sanding / Assembly â today's order of attack</h2>
     <table>
       <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -272,7 +354,7 @@ function warrantyPanel(){
   const rows = CONFIG.warranties.map(w=>`<tr>
       <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
     </tr>`).join("");
-  return `<h2>Active KY warranties — keep these moving</h2>
+  return `<h2>Active KY warranties â keep these moving</h2>
     <table>
       <thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -360,16 +442,16 @@ setInterval(pollLive, CONFIG.live.pollMinutes * 60 * 1000);
 
 /* Ticker */
 document.getElementById("ticker").innerHTML =
-  CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;"+t).join("");
+  CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;â¢&nbsp;&nbsp;&nbsp;"+t).join("");
 
-/* Keep the screen awake — the page itself asks the device not to sleep.
+/* Keep the screen awake â the page itself asks the device not to sleep.
    Works in Chromium-based browsers (incl. Silk). Re-acquires on tab focus
    and survives the 10-min page reload since it runs on every load. */
 async function keepAwake(){
   if(!("wakeLock" in navigator)) return;
   const grab = async () => {
     try{ await navigator.wakeLock.request("screen"); }
-    catch(e){ console.warn("wakeLock;", e); }
+    catch(e){ console.warn("wakeLock:", e); }
   };
   await grab();
   document.addEventListener("visibilitychange", () => {
