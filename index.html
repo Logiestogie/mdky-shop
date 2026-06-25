@@ -332,7 +332,7 @@ async function fetchCSV(url){
 }
 const num = s => parseFloat(String(s).replace(/["$,\s]/g,"")) || 0;
 
-amsync function pollLive(){
+async function pollLive(){
   let anyOk = false;
 
   if(hasFeed("numbers")){
