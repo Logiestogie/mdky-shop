@@ -2,117 +2,198 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Auto-reload the whole page every 10 minutes to pick up new deploys from Netlify -->
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="refresh" content="600">
 <title>Murphy Door KY â Shop Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#14172a; --bg2:#1a1d2e; --panel:#1e2130; --panel-2:#232740;
-    --line:rgba(255,255,255,.08); --blue:#1976d2; --blue-2:#1565c0;
-    --text:#eef1f8; --muted:#8e96b3; --green:#43c463; --amber:#ffb300;
-    --red:#ef5350; --red-dark:#c62828;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);
-    color:var(--text); font-family:'Inter',sans-serif; overflow:hidden;
-    display:flex;flex-direction:column;
-  }
-
-  /* ===== HEADER ===== */
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:1.2vh 2.5vw;
-    background:linear-gradient(90deg,var(--blue-2),var(--blue));
-    box-shadow:0 2px 14px rgba(0,0,0,.45); flex:0 0 auto;
-  }
-  .brand{display:flex;align-items:baseline;gap:1vw}
-  .brand .name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:3.4vh;letter-spacing:.06em;text-transform:uppercase}
-  .brand .loc{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:2.2vh;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
-  #panelTitle{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.12em;text-transform:uppercase;text-align:center}
-  .clockbox{text-align:right;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:1vw}
-  #clock{font-size:3.2vh;font-weight:700;line-height:1}
-  #dateline{font-size:1.7vh;opacity:.85;margin-top:.4vh}
-  #liveDot{
-    width:1.4vh;height:1.4vh;border-radius:50%;background:rgba(255,255,255,.25);
-    flex:0 0 auto;
-  }
-  #liveDot.on{background:var(--green);box-shadow:0 0 1.2vh rgba(67,196,99,.8)}
-
-  /* ===== STAGE ===== */
-  main{flex:1 1 auto;position:relative;overflow:hidden}
-  .panel{
-    position:absolute;inset:0;padding:3vh 3vw;
-    opacity:0;transform:translateY(1.5vh);
-    transition:opacity .6s ease,transform .6s ease;
-    pointer-events:none;display:flex;flex-direction:column;gap:2.2vh;
-  }
-  .panel.active{opacity:1;transform:none;pointer-events:auto}
-  .panel h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.6vh;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-
-  /* ---- Daily Numbers ---- */
-  .rev-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:14px;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.6vh;
-    padding:3vh 2vw;
-  }
-  .rev-label{font-family:'Barlow Condensed',sans-serif;font-size:3vh;font-weight:600;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-  .rev-value{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22vh;line-height:.95;letter-spacing:.01em}
-  .rev-doors{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:6vh;color:#64b5f6}
-  .rev-doors small{font-size:3vh;color:var(--muted);font-weight:600;letter-spacing:.12em;text-transform:uppercase}
-  .rev-status{
-    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.4vh;
-    letter-spacing:.14em;text-transform:uppercase;padding:.8vh 2vw;border-radius:999px;
-  }
-  .status-on{background:rgba(67,196,99,.15);color:var(--green);border:1px solid rgba(67,196,99,.4)}
-  .status-behind{background:rgba(239,83,80,.12);color:var(--red);border:1px solid rgba(239,83,80,.4)}
-
-  /* ---- Tables ---- */
-  table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
-  th{
-    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.2vh;
-    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
-    text-align:left;padding:1.6vh 1.4vw;border-bottom:1px solid var(--line);background:var(--panel-2);
-  }
-  td{padding:1.7vh 1.4vw;font-size:2.5vh;border-bottom:1px solid var(--line);font-weight:500}
-  tr:last-child td{border-bottom:none}
-  td.order{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.6vh}
-  .more-note{font-family:'Barlow Condensed',sans-serif;font-size:2.4vh;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-  .badge{
-    display:inline-block;padding:.5vh 1vw;border-radius:8px;
-    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.1vh;letter-spacing:.1em;text-transform:uppercase;
-  }
-  .b-rush{background:rgba(255,179,0,.16);color:var(--amber);border:1px solid rgba(255,179,0,.45)}
-  .b-over{background:rgba(239,83,80,.14);color:var(--red);border:1px solid rgba(239,83,80,.45)}
-  .b-today{background:rgba(25,118,210,.18);color:#64b5f6;border:1px solid rgba(100,181,246,.45)}
-  .b-prog{background:rgba(142,150,179,.14);color:var(--muted);border:1px solid rgba(142,150,179,.4)}
-
-  /* ===== TICKER + ROTATION BAR ===== */
-  footer{flex:0 0 auto;background:#101325;border-top:1px solid var(--line)}
-  #rotbar{height:.6vh;background:var(--panel-2)}
-  #rotbar > span{display:block;height:100%;width:0;background:var(--blue)}
-  .ticker-wrap{overflow:hidden;white-space:nowrap;padding:1.4vh 0}
-  .ticker{
-    display:inline-block;padding-left:100%;
-    font-family:'JetBrains Mono',monospace;font-weight:500;font-size:2.4vh;color:#aeb6d4;
-    animation:scroll 45s linear infinite;
-  }
-  .ticker b{color:var(--amber);font-weight:700}
-  @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
-  @media (prefers-reduced-motion: reduce){
-    .ticker{animation:none;padding-left:2vw}
-    .panel{transition:none}
-  }
+:root{
+  --bg:#0d1020;--bg2:#111526;--panel:#181c2e;--panel-2:#1d2238;
+  --line:rgba(255,255,255,.07);--blue:#1976d2;--blue-2:#1256a8;
+  --text:#eef1f8;--muted:#7a84a8;--green:#3ec95c;--amber:#ffb300;
+  --red:#ef5350;--cyan:#29d4ff;--teal:#2d3f47;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);
+  pointer-events:none;z-index:900;
+}
+/* HEADER */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1vh 2.5vw;
+  background:linear-gradient(90deg,#0a2060 0%,#1256a8 30%,#1976d2 55%,#1256a8 75%,#0a2060 100%);
+  background-size:300% 100%;animation:headerSlide 12s linear infinite;
+  box-shadow:0 2px 24px rgba(0,0,0,.7),0 0 50px rgba(25,118,210,.12);
+  flex:0 0 auto;position:relative;z-index:10;
+}
+header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--cyan) 20%,#64b5f6 50%,var(--cyan) 80%,transparent 100%);
+  background-size:300% 100%;animation:headerSlide 6s linear infinite;opacity:.8;
+}
+@keyframes headerSlide{0%{background-position:0% 0%}100%{background-position:300% 0%}}
+/* Logo */
+.brand{display:flex;align-items:center;gap:1.2vw}
+.brand svg{height:3.6vh;width:auto;filter:drop-shadow(0 0 8px rgba(255,255,255,.2))}
+.brand .loc{
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:2vh;
+  letter-spacing:.2em;text-transform:uppercase;opacity:.8;
+  border-left:1px solid rgba(255,255,255,.3);padding-left:1.2vw;margin-left:.2vw;
+}
+#panelTitle{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.9vh;
+  letter-spacing:.14em;text-transform:uppercase;text-align:center;transition:opacity .25s;
+}
+#panelTitle.fade{opacity:0}
+.clockbox{text-align:right;display:flex;align-items:center;gap:1.2vw}
+#clock{font-family:'JetBrains Mono',monospace;font-size:3.1vh;font-weight:700;line-height:1}
+#dateline{font-family:'JetBrains Mono',monospace;font-size:1.5vh;opacity:.8;margin-top:.4vh}
+#liveDot{width:1.3vh;height:1.3vh;border-radius:50%;background:rgba(255,255,255,.2);flex:0 0 auto}
+#liveDot.on{background:var(--green);animation:livePulse 2.4s ease-in-out infinite}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(62,201,92,.5)}60%{box-shadow:0 0 0 5px rgba(62,201,92,0)}}
+/* STAGE */
+main{
+  flex:1 1 auto;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%,rgba(25,118,210,.06) 0%,transparent 60%),var(--bg);
+}
+/* Panel photo backgrounds */
+.panel{
+  position:absolute;inset:0;padding:2.5vh 3vw;
+  opacity:0;pointer-events:none;display:flex;flex-direction:column;gap:2vh;
+}
+.panel::before{
+  content:'';position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  opacity:0;transition:opacity .6s;pointer-events:none;z-index:-1;border-radius:0;
+}
+.panel.has-photo::before{opacity:.07}
+.panel.active{
+  opacity:1;pointer-events:auto;
+  animation:panelIn .5s cubic-bezier(.22,.68,0,1.15) forwards;
+}
+.panel.exiting{animation:panelOut .35s ease-in forwards;pointer-events:none;}
+@keyframes panelIn{from{opacity:0;transform:translateX(3.5vw)}to{opacity:1;transform:translateX(0)}}
+@keyframes panelOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-3vw)}}
+.panel h2{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.3vh;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:.8vw;
+}
+.panel h2::before{
+  content:'';display:block;width:.7vh;height:.7vh;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex:0 0 auto;
+}
+/* Panel watermark logo */
+.panel-logo{
+  position:absolute;bottom:1.5vh;right:2vw;opacity:.06;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:4vh;
+  letter-spacing:.12em;text-transform:uppercase;pointer-events:none;
+  white-space:nowrap;
+}
+/* Daily Numbers */
+.rev-card{
+  background:linear-gradient(145deg,var(--panel) 0%,var(--panel-2) 100%);
+  border:1px solid rgba(25,118,210,.18);border-radius:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.8vh;
+  padding:3vh 2vw;flex:1;position:relative;overflow:hidden;
+}
+.rev-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -10%,rgba(25,118,210,.1) 0%,transparent 65%);
+  pointer-events:none;
+}
+.rev-label{font-family:'Barlow Condensed',sans-serif;font-size:2.8vh;font-weight:600;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+.rev-value{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20vh;line-height:.93;letter-spacing:.01em;transition:color .6s,text-shadow .6s}
+.rev-value.on{color:var(--green);text-shadow:0 0 60px rgba(62,201,92,.3)}
+.rev-doors{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:5.5vh;color:#64b5f6}
+.rev-doors small{font-size:2.7vh;color:var(--muted);font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.rev-status{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.1vh;
+  letter-spacing:.15em;text-transform:uppercase;padding:.vh 2.5vw;border-radius:999px;transition:all .4s;
+}
+.status-on{background:rgba(62,201,92,.13);color:var(--green);border:1px solid rgba(62,201,92,.4);box-shadow:0 0 18px rgba(62,201,92,.12)}
+.status-behind{background:rgba(239,83,80,.11);color:var(--red);border:1px solid rgba(239,83,80,.38)}
+/* Tables */
+table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+th{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.9vh;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+  text-align:left;padding:1.3vh 1.4vw;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,var(--panel-2),rgba(29,34,56,.5));
+}
+td{padding:1.4vh 1.4vw;font-size:2.2vh;border-bottom:1px solid var(--line);font-weight:500}
+tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+tr:last-child td{border-bottom:none}
+td.order{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.3vh}
+.more-note{font-family:'Barlow Condensed',sans-serif;font-size:2.1vh;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:.8vh}
+.badge{display:inline-block;padding:.4vh .9vw;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.9vh;letter-spacing:.1em;text-transform:uppercase}
+.b-rush{background:rgba(255,179,0,.13);color:var(--amber);border:1px solid rgba(255,179,0,.38);animation:rushGlow 2.2s ease-in-out infinite}
+@keyframes rushGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,179,0,.25)}55%{box-shadow:0 0 10px rgba(255,179,0,.45)}}
+.b-over{background:rgba(239,83,80,.13);color:var(--red);border:1px solid rgba(239,83,80,.38)}
+.b-today{background:rgba(25,118,210,.16);color:#64b5f6;border:1px solid rgba(100,181,246,.38)}
+.b-prog{background:rgba(122,132,168,.11);color:var(--muted);border:1px solid rgba(122,132,168,.3)}
+/* Cycle Times */
+.ct-subtitle{font-family:'Barlow Condensed',sans-serif;font-size:2vh;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:-.5vh}
+.ct-grid{display:flex;flex-direction:column;gap:2vh;flex:1;justify-content:center}
+.ct-row{display:flex;align-items:center;gap:1.5vw}
+.ct-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2.4vh;letter-spacing:.07em;text-transform:uppercase;width:19vw;flex:0 0 19vw;text-align:right}
+.ct-bar-bg{flex:1;height:4.2vh;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.ct-bar-fill{height:100%;border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.22,.68,0,1.18);position:relative}
+.ct-bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,.18),transparent);border-radius:8px 8px 0 0}
+.ct-fast{background:linear-gradient(90deg,#1e6b30,var(--green))}
+.ct-med{background:linear-gradient(90deg,#7a5700,var(--amber))}
+.ct-slow{background:linear-gradient(90deg,#7a1f1f,var(--red))}
+.ct-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.3vh;width:10vw;flex:0 0 10vw}
+.ct-fast-text{color:var(--green)}.ct-med-text{color:var(--amber)}.ct-slow-text{color:var(--red)}
+.ct-sample{font-family:'JetBrains Mono',monospace;font-size:1.7vh;color:var(--muted);width:8vw;flex:0 0 8vw}
+/* Footer */
+footer{flex:0 0 auto;background:#080b16;border-top:1px solid rgba(25,118,210,.15)}
+#rotbar{height:.9vh;background:rgba(255,255,255,.04);position:relative;overflow:hidden}
+#rotbar>span{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--blue-2),var(--cyan),#64b5f6,var(--cyan),var(--blue));
+  background-size:300% 100%;animation:barShimmer 2s linear iinfinite;
+  box-shadow:0 0 10px rgba(41,212,255,.5);
+}
+@keyframes barShimmer{0%{background-position:0%}100%{background-position:300%}}
+.ticker-wrap{overflow:hidden;white-space:nowrap;padding:1.1vh 0}
+.ticker{
+  display:inline-block;padding-left:100%;
+  font-family:'JetBrains Mono',monospace;font-weight:500;font-size:2.1vh;color:#636d8a;
+  animation:scroll 55s linear infinite;
+}
+.ticker b{color:var(--amber);font-weight:700}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+@media(prefers-reduced-motion:reduce){
+  .ticker,.panel,#liveDot.on,.b-rush,#rotbar>span{animation:none}
+  header,header::after{animation:none;background-position:0%}
+}
 </style>
 </head>
 <body>
-
 <header>
   <div class="brand">
-    <span class="name">Murphy Door</span>
+    <!-- Murphy Door logo SVG (white version for dark background) -->
+    <svg viewBox="0 0 220 48" xmlns="http://www.w3.org/2000/svg" fill="white" aria-label="Murphy Door">
+      <!-- Geometric icon: stacked layered panels suggesting a hidden door -->
+      <g transform="translate(0,2)">
+        <polygon points="22,0 44,9 22,18 0,9" opacity="1"/>
+        <polygon points="22,12 44,21 22,30 0,21" opacity=".72"/>
+        <polygon points="22,24 44,33 22,42 0,33" opacity=".44"/>
+      </g>
+      <!-- MURPHY DOOR text -->
+      <text x="54" y="34" font-family="'Barlow Condensed',Arial,sans-serif" font-weight="800"
+            font-size="34" letter-spacing="2" text-anchor="start">MURPHY DOOR</text>
+      <!-- Registered trademark -->
+      <text x="213" y="16" font-family="Arial,sans-serif" font-weight="400" font-size="12" text-anchor="start">&#174;</text>
+    </svg>
     <span class="loc">Kentucky Production</span>
   </div>
   <div id="panelTitle">Daily Numbers</div>
@@ -124,333 +205,293 @@
     </div>
   </div>
 </header>
-
 <main id="stage"></main>
-
 <footer>
   <div id="rotbar"><span></span></div>
   <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
 </footer>
-
 <script>
-/* ===================================================================
-   SHOP DASHBOARD CONFIG
-   =================================================================== */
 const CONFIG = {
-  panelSeconds: 20,
-
-  /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
-     numbers: Date, Doors, Revenue                                  */
+  panelSeconds: 12,
   live: {
-    feeds: {
-      numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv"
-    },
-    pollMinutes: 5,
-    headcount: 16,        // normal headcount is 18 â set to 16 today (2 call-ins)
-    rpeGoal: 4000         // daily RPE goal
+    feeds: { numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv" },
+    pollMinutes: 5, headcount: 16, rpeGoal: 4000
   },
-
-  /* Live data lands here â zeros until the feed connects */
   today: { doorsShipped: 0, revenue: 0 },
-
-  /* Paint priorities â refreshed nightly from the Trello Paint/Stain list
-     during the EOD run, sorted RUSH/overdue first. Empty = panel skipped. */
-  paint: [
-    {"order": "93373", "customer": "Schuppi 42-1", "finish": "Stain - Burnt Coal", "due": "6/17", "status": "rush"},
-    {"order": "93392", "customer": "Loebl 36", "finish": "Stain - Walnut", "due": "6/18", "status": "rush"},
-    {"order": "93078A", "customer": "Shelstad Maple", "finish": "Stain - Clear", "due": "6/19", "status": "rush"},
-    {"order": "93525A", "customer": "Bruni PG", "finish": "Paint - White", "due": "6/24", "status": "rush"},
-    {"order": "92819A", "customer": "Stricklin 40", "finish": "Paint - Black", "due": "6/29", "status": "rush"},
-    {"order": "93301", "customer": "Grider 54", "finish": "-", "due": "7/29", "status": "rush"},
-    {"order": "93923", "customer": "Potocki 36", "finish": "Paint - White", "due": "7/1", "status": ""},
-    {"order": "92058A", "customer": "Legatt 47-1", "finish": "-", "due": "7/6", "status": ""},
-    {"order": "93267", "customer": "SCHMERTZLER 20", "finish": "Stain - Walnut", "due": "7/15", "status": ""},
-    {"order": "92151", "customer": "King 32", "finish": "Paint - White", "due": "7/15", "status": ""},
-    {"order": "92845", "customer": "Conran 68", "finish": "Stain - Walnut", "due": "7/20", "status": ""},
-    {"order": "92893", "customer": "Sutton 32", "finish": "Stain - Natural", "due": "7/22", "status": ""},
-    {"order": "93076", "customer": "Beck 34", "finish": "Paint - Black", "due": "7/23", "status": ""},
-    {"order": "93172", "customer": "Roberts 36", "finish": "Primed (RTS)", "due": "7/27", "status": ""},
-    {"order": "93265", "customer": "Mgrdichian 30", "finish": "Paint - White", "due": "7/28", "status": ""},
-    {"order": "93261", "customer": "Knowles 44", "finish": "Stain - Medium", "due": "7/29", "status": ""},
-    {"order": "93287", "customer": "Miller 24", "finish": "Stain - Medium", "due": "7/29", "status": ""},
-    {"order": "93510B", "customer": "Crossett 36", "finish": "Paint - Black", "due": "7/29", "status": ""},
-    {"order": "93401", "customer": "Badrinathan Twin", "finish": "Stain - Medium", "due": "7/31", "status": ""},
-    {"order": "93521", "customer": "Menegus 44", "finish": "Paint - Black", "due": "8/4", "status": ""},
-    {"order": "93524", "customer": "Shiner 72", "finish": "Stain - Burnt Coal", "due": "8/4", "status": ""},
-    {"order": "93557A", "customer": "Melbourn 30", "finish": "Paint - White", "due": "8/4", "status": ""},
-    {"order": "93579", "customer": "Pugh 56 PG", "finish": "Paint - Black", "due": "8/5", "status": ""},
-    {"order": "93593A", "customer": "Jansen 69-.5", "finish": "Paint - White", "due": "8/5", "status": ""},
-    {"order": "93637", "customer": "Odell Horizontal", "finish": "Stain - Walnut", "due": "8/5", "status": ""},
-    {"order": "93624", "customer": "Buttorff", "finish": "Primer Only", "due": "8/6", "status": ""},
-    {"order": "93662", "customer": "Walker 48-1", "finish": "Paint - Black", "due": "8/6", "status": ""},
-    {"order": "93691", "customer": "Hill 27", "finish": "Stain - Walnut", "due": "8/7", "status": ""},
-    {"order": "93709", "customer": "Hurst 38", "finish": "Stain - Natural", "due": "8/7", "status": ""},
-    {"order": "92722A", "customer": "Wilczak 30 PG", "finish": "Paint - Black", "due": "8/7", "status": ""},
-    {"order": "93742", "customer": "Watson 20", "finish": "Paint - Black", "due": "8/10", "status": ""},
-    {"order": "93746", "customer": "Morgan 59", "finish": "Stain - Walnut", "due": "8/10", "status": ""},
-    {"order": "93792", "customer": "Carson 36", "finish": "Paint - White", "due": "8/10", "status": ""},
-    {"order": "93794", "customer": "Orifici 24", "finish": "Paint - Black", "due": "8/10", "status": ""},
-    {"order": "93856", "customer": "Sieiro 32", "finish": "Paint - White", "due": "8/11", "status": ""},
-    {"order": "93885", "customer": "Wittbrodt 44", "finish": "Paint - Black", "due": "8/11", "status": ""},
-    {"order": "93948", "customer": "Hughes 30-1", "finish": "Stain - Clear", "due": "8/12", "status": ""}
+  cycleTimes: [
+    {dept:"CNC",             avgHours:11.6, samples:62},
+    {dept:"Sanding / Build", avgHours:21.6, samples:27},
+    {dept:"Paint / Stain",   avgHours: 4.3, samples: 3},
+    {dept:"Assembly / Addo", avgHours:22.1, samples:17},
+    {dept:"QA",              avgHours: 6.8, samples: 7},
+    {dept:"Packaging",       avgHours:10.7, samples:18}
   ],
-
-  building: [
-    {"order": "93895A", "customer": "Imel 36", "dept": "Sanding", "doors": 1, "due": "7/1", "status": "rush"},
-    {"order": "92131", "customer": "Mckinney 56", "dept": "Assembly", "doors": 1, "due": "6/15", "status": "overdue"},
-    {"order": "93916", "customer": "Dobkoski 36", "dept": "Sanding", "doors": 1, "due": "7/1", "status": ""},
-    {"order": "93942", "customer": "Rogoff 32", "dept": "Sanding", "doors": 1, "due": "7/1", "status": ""},
-    {"order": "92613", "customer": "Wilson 56", "dept": "Assembly", "doors": 1, "due": "7/15", "status": ""},
-    {"order": "92683A", "customer": "Standley 36", "dept": "Assembly", "doors": 1, "due": "7/16", "status": ""},
-    {"order": "92725", "customer": "Rowe 36", "dept": "Assembly", "doors": 1, "due": "7/17", "status": ""},
-    {"order": "93940", "customer": "Bairos 30", "dept": "Assembly", "doors": 1, "due": "7/29", "status": ""},
-    {"order": "93896A", "customer": "Roberts 36", "dept": "Assembly", "doors": 1, "due": "7/29", "status": ""},
-    {"order": "28558002", "customer": "Abend 28", "dept": "Assembly", "doors": 1, "due": "8/3", "status": ""},
-    {"order": "93808", "customer": "Pescaello 33", "dept": "Sanding", "doors": 1, "due": "8/11", "status": ""},
-    {"order": "93944", "customer": "Marks 27", "dept": "Sanding", "doors": 1, "due": "8/12", "status": ""},
-    {"order": "93943", "customer": "Two 36", "dept": "Sanding", "doors": 1, "due": "8/12", "status": ""}
-  ],
-
-  priorities: [
-    {"order": "93373", "customer": "Schuppi", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "93392", "customer": "Loebl", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "93078A", "customer": "Shelstad", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "93228", "customer": "Demarco", "dept": "QA", "status": "rush"},
-    {"order": "93297", "customer": "Raynor", "dept": "QA", "status": "rush"},
-    {"order": "93525A", "customer": "Bruni", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "93681A", "customer": "Brashear", "dept": "QA", "status": "rush"},
-    {"order": "92819A", "customer": "Stricklin", "dept": "Paint/Stain", "status": "rush"}
-  ],
-
-  // Active KY warranty orders â updated nightly with the EOD run
+  paint: [{"order":"93373","customer":"Schuppi 42-1","finish":"Stain - Burnt Coal","due":"6/17","status":"rush"},{"order":"93392","customer":"Loebl 36","finish":"Stain - Walnut","due":"6/18","status":"rush"},{"order":"93078A","customer":"Shelstad Maple","finish":"Stain - Clear","due":"6/19","status":"rush"},{"order":"93525A","customer":"Bruni PG","finish":"Paint - White","due":"6/24","status":"rush"},{"order":"92819A","customer":"Stricklin 40","finish":"Paint - Black","due":"6/29","status":"rush"},{"order":"93301","customer":"Grider 54","finish":"-","due":"7/29","status":"rush"},{"order":"93923","customer":"Potocki 36","finish":"Paint - White","due":"7/1","status":""},{"order":"92058A","customer":"Legatt 47-1","finish":"-","due":"7/6","status":""},{"order":"93267","customer":"SCHMERTZLER 20","finish":"Stain - Walnut","due":"7/15","status":""},{"order":"92151","customer":"King 32","finish":"Paint - White","due":"7/15","status":""},{"order":"92845","customer":"Conran 68","finish":"Stain - Walnut","due":"7/20","status":""},{"order":"92893","customer":"Sutton 32","finish":"Stain - Natural","due":"7/22","status":""},{"order":"93076","customer":"Beck 34","finish":"Paint - Black","due":"7/23","status":""},{"order":"93172","customer":"Roberts 36","finish":"Primed (RTS)","due":"7/27","status":""},{"order":"93265","customer":"Mgrdichian 30","finish":"Paint - White","due":"7/28","status":""},{"order":"93261","customer":"Knowles 44","finish":"Stain - Medium","due":"7/29","status":""},{"order":"93287","customer":"Miller 24","finish":"Stain - Medium","due":"7/29","status":""},{"order":"93510B","customer":"Crossett 36","finish":"Paint - Black","due":"7/29","status":""},{"order":"93401","customer":"Badrinathan Twin","finish":"Stain - Medium","due":"7/31","status":""},{"order":"93521","customer":"Menegus 44","finish":"Paint - Black","due":"8/4","status":""},{"order":"93524","customer":"Shiner 72","finish":"Stain - Burnt Coal","due":"8/4","status":""},{"order":"93557A","customer":"Melbourn 30","finish":"Paint - White","due":"8/4","status":""},{"order":"93579","customer":"Pugh 56 PG","finish":"Paint - Black","due":"8/5","status":""},{"order":"93593A","customer":"Jansen 69-.5","finish":"Paint - White","due":"8/5","status":""},{"order":"93637","customer":"Odell Horizontal","finish":"Stain - Walnut","due":"8/5","status":""},{"order":"93624","customer":"Buttorff","finish":"Primer Only","due":"8/6","status":""},{"order":"93662","customer":"Walker 48-1","finish":"Paint - Black","due":"8/6","status":""},{"order":"93691","customer":"Hill 27","finish":"Stain - Walnut","due":"8/7","status":""},{"order":"93709","customer":"Hurst 38","finish":"Stain - Natural","due":"8/7","status":""},{"order":"92722A","customer":"Wilczak 30 PG","finish":"Paint - Black","due":"8/7","status":""},{"order":"93742","customer":"Watson 20","finish":"Paint - Black","due":"8/10","status":""},{"order":"93746","customer":"Morgan 59","finish":"Stain - Walnut","due":"8/10","status":""},{"order":"93792","customer":"Carson 36","finish":"Paint - White","due":"8/10","status":""},{"order":"93794","customer":"Orifici 24","finish":"Paint - Black","due":"8/10","status":""},{"order":"93856","customer":"Sieiro 32","finish":"Paint - White","due":"8/11","status":""},{"order":"93885","customer":"Wittbrodt 44","finish":"Paint - Black","due":"8/11","status":""},{"order":"93948","customer":"Hughes 30-1","finish":"Stain - Clear","due":"8/12","status":""}],
+  building: [{"order":"93895A","customer":"Imel 36","dept":"Sanding","doors":1,"due":"7/1","status":"rush"},{"order":"92131","customer":"Mckinney 56","dept":"Assembly","doors":1,"due":"6/15","status":"overdue"},{"order":"93916","customer":"Dobkoski 36","dept":"Sanding","doors":1,"due":"7/1","status":""},{"order":"93942","customer":"Rogoff 32","dept":"Sanding","doors":1,"due":"7/1","status":""},{"order":"92613","customer":"Wilson 56","dept":"Assembly","doors":1,"due":"7/15","status":""},{"order":"92683A","customer":"Standley 36","dept":"Assembly","doors":1,"due":"7/16","status":""},{"order":"92725","customer":"Rowe 36","dept":"Assembly","doors":1,"due":"7/17","status":""},{"order":"93940","customer":"Bairos 30","dept":"Assembly","doors":1,"due":"7/29","status":""},{"order":"93896A","customer":"Roberts 36","dept":"Assembly","doors":1,"due":"7/29","status":""},{"order":"28558002","customer":"Abend 28","dept":"Assembly","doors":1,"due":"8/3","status":""},{"order":"93808","customer":"Pescaello 33","dept":"Sanding","doors":1,"due":"8/11","status":""},{"order":"93944","customer":"Marks 27","dept":"Sanding","doors":1,"due":"8/12","status":""},{"order":"93943","customer":"Two 36","dept":"Sanding","doors":1,"due":"8/12","status":""}],
+  priorities: [{"order":"93373","customer":"Schuppi","dept":"Paint/Stain","status":"rush"},{"order":"93392","customer":"Loebl","dept":"Paint/Stain","status":"rush"},{"order":"93078A","customer":"Shelstad","dept":"Paint/Stain","status":"rush"},{"order":"93228","customer":"Demarco","dept":"QA","status":"rush"},{"order":"93297","customer":"Raynor","dept":"QA","status":"rush"},{"order":"93525A","customer":"Bruni","dept":"Paint/Stain","status":"rush"},{"order":"93681A","customer":"Brashear","dept":"QA","status":"rush"},{"order":"92819A","customer":"Stricklin","dept":"Paint/Stain","status":"rush"}],
   warranties: [
-    { order: "93297 / 89818",       issue: "Right side refreshment cab door, crown entablature & threshold damaged", dept: "Build",     status: "inprogress" },
-    { order: "93347 / PO#39701299", issue: "Missing lock bar for mechanical key lock",                               dept: "Packaging", status: "inprogress" },
-    { order: "93373 / 71293A",      issue: "Door warped â replacement carcass (aged, get it out)",                   dept: "Build",     status: "rush"       },
-    { order: "93374 / 91204",       issue: "Door delivered damaged â carcass & top jamb",                            dept: "Build",     status: "inprogress" }
+    {order:"93297 / 89818",       issue:"Right side refreshment cab door, crown entablature & threshold damaged", dept:"Build",     status:"inprogress"},
+    {order:"93347 / PO#39701299", issue:"Missing lock bar for mechanical key lock",                               dept:"Packaging", status:"inprogress"},
+    {order:"93373 / 71293A",      issue:"Door warped â replacement carcass (aged, get it out)",                  dept:"Build",     status:"rush"},
+    {order:"93374 / 91204",       issue:"Door delivered damaged â carcass & top jamb",                           dept:"Build",     status:"inprogress"}
   ],
-
   ticker: [
     "RPE goal: <b>$4,000/day</b> â every order counts",
     "RUSH orders jump the line â check the board before starting your next build",
     "Re-cut prevention is this month's focus â measure twice, cut once",
     "Keep paperwork with the unit at all times",
     "Safety first: clear walkways, glasses on at every machine"
-  ]
+  ],
+  /* Product photos from murphydoor.com â assign CDN URLs here once available */
+  photos: {
+    numbers:  "",
+    cycletime:"",
+    priority: "",
+    building: "",
+    paint:    "",
+    warranty: ""
+  }
 };
 
-/* =================== HELPERS =================== */
+/* ===== HELPERS ===== */
 const fmt$ = n => "$" + Math.round(n).toLocaleString();
-const hasFeed = key => {
-  const u = CONFIG.live.feeds[key];
-  return u && !u.includes("PASTE");
-};
-/* Minimal CSV parser that handles quoted fields with commas */
+const num  = s => parseFloat(String(s).replace(/["$,\s]/g,""))||0;
+const hasFeed = k => { const u=CONFIG.live.feeds[k]; return u&&!u.includes("PASTE"); };
+
 function parseCSV(text){
-  const rows = [];
-  let row = [], field = "", inQ = false;
-  for(let i = 0; i < text.length; i++){
-    const c = text[i];
-    if(inQ){
-      if(c === '"'){ if(text[i+1] === '"'){ field += '"'; i++; } else inQ = false; }
-      else field += c;
-    }else{
-      if(c === '"') inQ = true;
-      else if(c === ","){ row.push(field); field = ""; }
-      else if(c === "\n" || c === "\r"){
-        if(field !== "" || row.length){ row.push(field); rows.push(row); row = []; field = ""; }
-      }
-      else field += c;
+  const rows=[]; let row=[],field="",inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i++;}else inQ=false;}else field+=c;}
+    else{
+      if(c==='"')inQ=true;
+      else if(c===','){row.push(field);field="";}
+      else if(c==='\n'||c==='\r'){if(field!==''||row.length){row.push(field);rows.push(row);row=[];field='';}}
+      else field+=c;
     }
   }
-  if(field !== "" || row.length){ row.push(field); rows.push(row); }
+  if(field!==''||row.length){row.push(field);rows.push(row);}
   return rows;
 }
-/* =================== PANELS =================== */
+async function fetchCSV(url){
+  const bust=url+(url.includes("?")?"&":"?")+"t="+Date.now();
+  const res=await fetch(bust,{cache:"no-store"});
+  if(!res.ok) throw new Error("HTTP "+res.status);
+  return parseCSV((await res.text()).trim());
+}
+
+/* ===== PANELS ===== */
+function badge(s){
+  if(s==="rush")    return '<span class="badge b-rush">Rush</span>';
+  if(s==="overdue") return '<span class="badge b-over">Overdue</span>';
+  if(s==="today")   return '<span class="badge b-today">Due Today</span>';
+  return '<span class="badge b-prog">In Progress</span>';
+}
+function watermark(label){ return `<div class="panel-logo">Murphy Door &nbsp;${label}</div>`; }
+
 function numbersPanel(){
-  const t = CONFIG.today;
-  const rpe = CONFIG.live.headcount > 0 ? t.revenue / CONFIG.live.headcount : 0;
-  const met = rpe >= CONFIG.live.rpeGoal;
-  return `<h2>Where we stand right now</h2>
-    <div class="rev-card" style="flex:1">
+  const t=CONFIG.today;
+  const rpe=CONFIG.live.headcount>0?t.revenue/CONFIG.live.headcount:0;
+  const met=rpe>=CONFIG.live.rpeGoal;
+  return `
+    <h2>Where we stand right now</h2>
+    <div class="rev-card">
       <div class="rev-label">Revenue Shipped Today</div>
-      <div class="rev-value" style="color:${met?'var(--green)':'var(--text)'}">${fmt$(t.revenue)}</div>
+      <div class="rev-value${met?' on':''}">${fmt$(t.revenue)}</div>
       <div class="rev-doors">${t.doorsShipped} <small>doors shipped</small></div>
       <div class="rev-status ${met?'status-on':'status-behind'}">RPE ${fmt$(rpe)} / ${fmt$(CONFIG.live.rpeGoal)} goal</div>
-    </div>`;
+    </div>${watermark('Kentucky')}`;
+}
+
+function cycleTimesPanel(){
+  const max=Math.max(...CONFIG.cycleTimes.map(d=>d.avgHours));
+  const cc=h=>h<8?'ct-fast':h<16?'ct-med':'ct-slow';
+  const tc=h=>h<8?'ct-fast-text':h<16?'ct-med-text':'ct-slow-text';
+  const fmtH=h=>h<24
+    ?`${h.toFixed(1)}<span style="font-size:.75em;opacity:.7"> hrs</span>`
+    :`${(h/24).toFixed(1)}<span style="font-size:.75em;opacity:.7"> days</span>`;
+  const rows=CONFIG.cycleTimes.map(d=>`
+    <div class="ct-row">
+      <div class="ct-label">${d.dept}</div>
+      <div class="ct-bar-bg"><div class="ct-bar-fill ${cc(d.avgHours)}" style="width:${(d.avgHours/max*100).toFixed(1)}%"></div></div>
+      <div class="ct-val ${tc(d.avgHours)}">${fmtH(d.avgHours)}</div>
+      <div class="ct-sample">${d.samples} orders</div>
+    </div>`).join('');
+  return `
+    <h2>Avg Cycle Time by Department</h2>
+    <div class="ct-subtitle">5-day rolling avg &nbsp;â¢&nbsp; last MonâFri</div>
+    <div class="ct-grid">${rows}</div>${watermark('Production')}`;
 }
 
 function prioritiesPanel(){
-  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
-    : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
-    : '<span class="badge b-today">Due Today</span>';
-  const rows = CONFIG.priorities.map(p=>`<tr>
-      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${badge(p.status)}</td>
-    </tr>`).join("");
-  return `<h2>Build these first</h2>
+  const rows=CONFIG.priorities.map(p=>`<tr>
+    <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${badge(p.status)}</td>
+  </tr>`).join("");
+  return `
+    <h2>Build these first</h2>
     <table>
       <thead><tr><th>Order #</th><th>Customer</th><th>Department</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table>${watermark('Priorities')}`;
 }
 
 function paintPanel(){
-  const MAX = 8;
-  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
-    : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : '';
-  const shown = CONFIG.paint.slice(0, MAX);
-  const rows = shown.map((p,i)=>`<tr>
-      <td class="order" style="color:#64b5f6">${i+1}</td>
-      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.finish}</td><td>${p.due}</td><td>${badge(p.status)}</td>
-    </tr>`).join("");
-  const more = CONFIG.paint.length > MAX
-    ? `<div class="more-note">+ ${CONFIG.paint.length - MAX} more in queue</div>` : "";
-  return `<h2>Paint / Stain â today's order of attack</h2>
+  const MAX=8;
+  const shown=CONFIG.paint.slice(0,MAX);
+  const rows=shown.map((p,i)=>`<tr>
+    <td class="order" style="color:#64b5f6">${i+1}</td>
+    <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.finish}</td><td>${p.due}</td>
+    <td>${p.status?badge(p.status):''}</td>
+  </tr>`).join("");
+  const more=CONFIG.paint.length>MAX?`<div class="more-note">+ ${CONFIG.paint.length-MAX} more in queue</div>`:"";
+  return `
+    <h2>Paint / Stain â today's order of attack</h2>
     <table>
-      <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead>
+      <thead><tr><th style="width:4vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>${more}`;
+    </table>${more}${watermark('Paint')}`;
 }
 
 function buildingPanel(){
-  const MAX = 8;
-  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
-    : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : '';
-  const shown = CONFIG.building.slice(0, MAX);
-  const rows = shown.map((p,i)=>`<tr>
-      <td class="order" style="color:#64b5f6">${i+1}</td>
-      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${p.doors}</td><td>${p.due}</td><td>${badge(p.status)}</td>
-    </tr>`).join("");
-  const more = CONFIG.building.length > MAX
-    ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : "";
-  return `<h2>Sanding / Assembly â today's order of attack</h2>
+  const MAX=8;
+  const shown=CONFIG.building.slice(0,MAX);
+  const rows=shown.map((p,i)=>`<tr>
+    <td class="order" style="color:#64b5f6">${i+1}</td>
+    <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td>
+    <td>${p.doors}</td><td>${p.due}</td>
+    <td>${p.status?badge(p.status):''}</td>
+  </tr>`).join("");
+  const more=CONFIG.building.length>MAX?`<div class="more-note">+ ${CONFIG.building.length-MAX} more in queue</div>`:"";
+  return `
+    <h2>Sanding / Assembly â today's order of attack</h2>
     <table>
-      <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
+      <thead><tr><th style="width:4vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>${more}`;
+    </table>${more}${watermark('Build')}`;
 }
 
 function warrantyPanel(){
-  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
-    : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
-    : s==="today" ? '<span class="badge b-today">Due Today</span>'
-    : '<span class="badge b-prog">In Progress</span>';
-  const rows = CONFIG.warranties.map(w=>`<tr>
-      <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
-    </tr>`).join("");
-  return `<h2>Active KY warranties â keep these moving</h2>
+  const rows=CONFIG.warranties.map(w=>`<tr>
+    <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
+  </tr>`).join("");
+  return `
+    <h2>Active KY warranties â keep these moving</h2>
     <table>
       <thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table>${watermark('Warranty')}`;
 }
 
-/* Panels skip themselves when their feed isn't connected or has no rows */
 const PANELS = [
-  { id:"numbers",  title:"Daily Numbers",    render:numbersPanel,    available:()=>true },
-  { id:"priority", title:"Top Priorities",   render:prioritiesPanel, available:()=>CONFIG.priorities.length>0 },
-  { id:"building", title:"Sanding / Assembly", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
-  { id:"paint",    title:"Paint Priorities", render:paintPanel,      available:()=>CONFIG.paint.length>0 },
-  { id:"warranty", title:"Warranties",       render:warrantyPanel,   available:()=>CONFIG.warranties.length>0 }
+  {id:"numbers",   title:"Daily Numbers",      render:numbersPanel,    available:()=>true},
+  {id:"cycletime", title:"Cycle Times",        render:cycleTimesPanel, available:()=>CONFIG.cycleTimes.length>0},
+  {id:"priority",  title:"Top Priorities",     render:prioritiesPanel, available:()=>CONFIG.priorities.length>0},
+  {id:"building",  title:"Sanding / Assembly", render:buildingPanel,   available:()=>CONFIG.building.length>0},
+  {id:"paint",     title:"Paint Priorities",   render:paintPanel,      available:()=>CONFIG.paint.length>0},
+  {id:"warranty",  title:"Warranties",         render:warrantyPanel,   available:()=>CONFIG.warranties.length>0}
 ];
 
-/* Build panel containers */
-const stage = document.getElementById("stage");
+/* Build panel DOM */
+const stage=document.getElementById("stage");
 PANELS.forEach(p=>{
-  const el = document.createElement("section");
-  el.className = "panel";
-  el.id = "panel-" + p.id;
-  el.innerHTML = p.render();
+  const el=document.createElement("section");
+  el.className="panel"; el.id="panel-"+p.id;
+  if(CONFIG.photos[p.id]){
+    el.classList.add("has-photo");
+    el.style.setProperty('--photo',`url(${CONFIG.photos[p.id]})`);
+  }
+  el.innerHTML=p.render();
   stage.appendChild(el);
 });
 
-/* Rotation across available panels only */
-let current = "numbers";
-const rotFill = document.querySelector("#rotbar > span");
+/* Apply CSS photo backgrounds */
+PANELS.forEach(p=>{
+  const el=document.getElementById("panel-"+p.id);
+  if(CONFIG.photos[p.id]) el.style.cssText+=`;--photo:url(${CONFIG.photos[p.id]})`;
+});
+/* Inject dynamic ::before via style tag */
+(()=>{
+  const s=document.createElement('style');
+  s.textContent='.has-photo::before{background-image:var(--photo)!important}';
+  document.head.appendChild(s);
+})();
+
+/* Rotation */
+let current="numbers";
+const rotFill=document.querySelector("#rotbar > span");
+
+function animateCycleBars(el){
+  el.querySelectorAll('.ct-bar-fill').forEach(b=>{
+    const t=b.style.width; b.style.width='0%';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.width=t; }));
+  });
+}
+
 function showPanel(id){
-  current = id;
-  const p = PANELS.find(x=>x.id===id);
-  document.querySelectorAll(".panel").forEach(el=>el.classList.remove("active"));
-  document.getElementById("panel-"+id).classList.add("active");
-  document.getElementById("panelTitle").textContent = p.title;
-  rotFill.style.transition = "none";
-  rotFill.style.width = "0%";
-  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
-    rotFill.style.transition = `width ${CONFIG.panelSeconds}s linear`;
-    rotFill.style.width = "100%";
-  });});
+  const old=stage.querySelector('.panel.active');
+  if(old&&old.id!=='panel-'+id){
+    old.classList.remove('active'); old.classList.add('exiting');
+    setTimeout(()=>old.classList.remove('exiting'),400);
+  }
+  current=id;
+  const p=PANELS.find(x=>x.id===id);
+  const el=document.getElementById('panel-'+id);
+  el.classList.add('active');
+  if(id==='cycletime') animateCycleBars(el);
+  const titleEl=document.getElementById('panelTitle');
+  titleEl.classList.add('fade');
+  setTimeout(()=>{ titleEl.textContent=p.title; titleEl.classList.remove('fade'); },250);
+  rotFill.style.transition='none'; rotFill.style.width='0%';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    rotFill.style.transition=`width ${CONFIG.panelSeconds}s linear`;
+    rotFill.style.width='100%';
+  }));
 }
+
 function nextPanel(){
-  const avail = PANELS.filter(p=>p.available());
+  const avail=PANELS.filter(p=>p.available());
   if(!avail.length) return;
-  const i = avail.findIndex(p=>p.id===current);
-  showPanel(avail[(i+1) % avail.length].id);
+  const i=avail.findIndex(p=>p.id===current);
+  showPanel(avail[(i+1)%avail.length].id);
 }
+
 showPanel("numbers");
-setInterval(nextPanel, CONFIG.panelSeconds*1000);
+setInterval(nextPanel,CONFIG.panelSeconds*1000);
 
-/* =================== LIVE FEED POLLING =================== */
-async function fetchCSV(url){
-  const bust = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
-  const res = await fetch(bust, { cache:"no-store" });
-  if(!res.ok) throw new Error("HTTP " + res.status);
-  return parseCSV((await res.text()).trim());
-}
-const num = s => parseFloat(String(s).replace(/["$,\s]/g,"")) || 0;
-
+/* Live feed polling */
 async function pollLive(){
-  let anyOk = false;
-
+  let anyOk=false;
   if(hasFeed("numbers")){
     try{
-      const rows = await fetchCSV(CONFIG.live.feeds.numbers);
-      let last = null;
-      for(const r of rows.slice(1)){ if(r.length>=3 && String(r[1]).trim()!=="") last = r; }
-      if(last){
-        CONFIG.today.doorsShipped = num(last[1]);
-        CONFIG.today.revenue = num(last[2]);
-        anyOk = true;
-      }
-    }catch(e){ console.warn("numbers feed:", e); }
+      const rows=await fetchCSV(CONFIG.live.feeds.numbers);
+      let last=null;
+      for(const r of rows.slice(1)){ if(r.length>=3&&String(r[1]).trim()!=="") last=r; }
+      if(last){ CONFIG.today.doorsShipped=num(last[1]); CONFIG.today.revenue=num(last[2]); anyOk=true; }
+    }catch(e){ console.warn("feed:",e); }
   }
-
-  /* Re-render all panels with fresh data */
-  PANELS.forEach(p=>{ document.getElementById("panel-"+p.id).innerHTML = p.render(); });
-  /* If the current panel just became unavailable, advance */
-  const cur = PANELS.find(p=>p.id===current);
-  if(cur && !cur.available()) nextPanel();
-  document.getElementById("liveDot").classList.toggle("on", anyOk);
+  PANELS.forEach(p=>{ document.getElementById("panel-"+p.id).innerHTML=p.render(); });
+  const cur=PANELS.find(p=>p.id===current);
+  if(cur&&!cur.available()) nextPanel();
+  document.getElementById("liveDot").classList.toggle("on",anyOk);
 }
 pollLive();
-setInterval(pollLive, CONFIG.live.pollMinutes * 60 * 1000);
+setInterval(pollLive,CONFIG.live.pollMinutes*60*1000);
 
-/* Ticker */
-document.getElementById("ticker").innerHTML =
+document.getElementById("ticker").innerHTML=
   CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;â¢&nbsp;&nbsp;&nbsp;"+t).join("");
 
-/* Keep the screen awake â the page itself asks the device not to sleep.
-   Works in Chromium-based browsers (incl. Silk). Re-acquires on tab focus
-   and survives the 10-min page reload since it runs on every load. */
 async function keepAwake(){
   if(!("wakeLock" in navigator)) return;
-  const grab = async () => {
-    try{ await navigator.wakeLock.request("screen"); }
-    catch(e){ console.warn("wakeLock:", e); }
-  };
+  const grab=async()=>{ try{ await navigator.wakeLock.request("screen"); }catch(e){} };
   await grab();
-  document.addEventListener("visibilitychange", () => {
-    if(document.visibilityState === "visible") grab();
-  });
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") grab(); });
 }
 keepAwake();
 
-/* Clock */
 function tick(){
-  const now = new Date();
-  document.getElementById("clock").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-  document.getElementById("dateline").textContent =
-    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  const now=new Date();
+  document.getElementById("clock").textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  document.getElementById("dateline").textContent=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
 }
 tick(); setInterval(tick,1000);
 </script>
