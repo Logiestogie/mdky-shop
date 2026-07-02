@@ -133,89 +133,101 @@
 </footer>
 
 <script>
+/* ===================================================================
+   SHOP DASHBOARD CONFIG
+   =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
+
+  /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
+     numbers: Date, Doors, Revenue                                  */
   live: {
     feeds: {
       numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv"
     },
     pollMinutes: 5,
-    headcount: 18,
-    rpeGoal: 4000
+    headcount: 18,        // normal headcount is 18 — set to 16 today (2 call-ins)
+    rpeGoal: 4000         // daily RPE goal
   },
+
+  /* Live data lands here — zeros until the feed connects */
   today: { doorsShipped: 0, revenue: 0 },
+
+  /* Paint priorities — refreshed nightly from the Trello Paint/Stain list
+     during the EOD run, sorted RUSH/overdue first. Empty = panel skipped. */
   paint: [
-    {"order":"93373","customer":"Schuppi 42-1\"","finish":"Stain - Burnt Coal","due":"6/17","status":"rush"},
-    {"order":"93078A","customer":"Shelstad Maple Shaker Face Panels","finish":"Stain - Clear","due":"6/19","status":"rush"},
-    {"order":"94195","customer":"Langenderfer 32\" PG Surface Mount","finish":"Paint - White","due":"7/6","status":"rush"},
-    {"order":"93301","customer":"Grider 54\" Alder French Cherry w/Mirror Back NC","finish":"-","due":"7/29","status":"rush"},
-    {"order":"92058A","customer":"Legatt 47-1\" PG 6-9/16\" Jamb INSIWNG Benjamin Moore Swiss Coffee OC-45 w/Flat Back MN","finish":"-","due":"7/6","status":""},
-    {"order":"94005","customer":"Cape 36\" PG Adj Shelves","finish":"Paint - Black","due":"7/9","status":""},
-    {"order":"94015","customer":"Gholson 28\" PG Adj Shelves","finish":"Paint - Black","due":"7/9","status":""},
-    {"order":"94060","customer":"Guida 36\"","finish":"Stain - Walnut","due":"7/10","status":""},
-    {"order":"93267","customer":"SCHMERTZLER 20\" Maple Murphy Shelf","finish":"Stain - Walnut","due":"7/15","status":""},
-    {"order":"93265","customer":"Mgrdichian 30\" PG 12\" Mirror Gun Door","finish":"Paint - White","due":"7/28","status":""},
-    {"order":"92860A","customer":"Velez 36\" PG 12-1/2\" Jamb Extension","finish":"Paint - White","due":"7/28","status":""},
-    {"order":"93316","customer":"Kupersmit 36\" PG Refreshment","finish":"Stain - Natural","due":"7/29","status":""},
-    {"order":"93866","customer":"Hutton PG Slideaway Safe","finish":"Paint - White","due":"7/30","status":""},
-    {"order":"93849","customer":"Fitzpatrick 56\" Maple Murphy Shelf","finish":"Stain - Clear","due":"7/30","status":""},
-    {"order":"93991","customer":"Siegfried 20\" PG Murphy Shelf","finish":"Paint - White","due":"7/30","status":""},
-    {"order":"93637","customer":"Odell Horizontal","finish":"Stain - Walnut","due":"8/5","status":""},
-    {"order":"93691","customer":"Hill 27\"","finish":"Stain - Walnut","due":"8/7","status":""},
-    {"order":"93709","customer":"Hurst 38\" W. Oak Pool Cue","finish":"Stain - Natural","due":"8/7","status":""},
-    {"order":"93746","customer":"Morgan 59\"","finish":"Stain - Walnut","due":"8/10","status":""},
-    {"order":"93754","customer":"Wentland","finish":"Stain - Walnut","due":"8/10","status":""},
-    {"order":"93885","customer":"Wittbrodt 44\" PG Surface Mount","finish":"Paint - Black","due":"8/11","status":""},
-    {"order":"93865","customer":"Wallace 30\" PG Mirror","finish":"Paint - Black","due":"8/11","status":""},
-    {"order":"93729A","customer":"Group 36\" PG Mirror","finish":"Paint - Black","due":"8/11","status":""},
-    {"order":"93772A","customer":"Shellhart 43\" PG","finish":"Paint - Black","due":"8/11","status":""},
-    {"order":"93948","customer":"Hughes 30-1\" Maple 6-9/16\" Jamb","finish":"Stain - Clear","due":"8/12","status":""},
-    {"order":"93945A","customer":"Ward 30\" PG","finish":"Paint - White","due":"8/12","status":""},
-    {"order":"93929","customer":"Sanders 36\"","finish":"Stain - Walnut","due":"8/13","status":""}
+    {"order": "93373", "customer": "Schuppi", "finish": "Stain - Burnt Coal", "due": "6/17", "status": "rush"},
+    {"order": "94195", "customer": "Langenderfer", "finish": "Paint - White", "due": "7/6", "status": "rush"},
+    {"order": "93301", "customer": "Grider", "finish": "-", "due": "7/29", "status": "rush"},
+    {"order": "94005", "customer": "Cape", "finish": "Paint - Black", "due": "7/9", "status": ""},
+    {"order": "94015", "customer": "Gholson", "finish": "Paint - Black", "due": "7/9", "status": ""},
+    {"order": "94060", "customer": "Guida", "finish": "Stain - Walnut", "due": "7/10", "status": ""},
+    {"order": "92860A", "customer": "Velez 36\"", "finish": "Paint - White", "due": "7/28", "status": ""},
+    {"order": "93316", "customer": "Kupersmit 36\"", "finish": "Stain - Natural", "due": "7/29", "status": ""},
+    {"order": "93849", "customer": "Fitzpatrick", "finish": "Stain - Clear", "due": "7/30", "status": ""},
+    {"order": "93866", "customer": "Hutton", "finish": "Paint - White", "due": "7/30", "status": ""},
+    {"order": "93991", "customer": "Siegfried", "finish": "Paint - White", "due": "7/30", "status": ""},
+    {"order": "93521", "customer": "Menegus", "finish": "Paint - Black", "due": "8/4", "status": ""},
+    {"order": "93637", "customer": "Odell", "finish": "Stain - Walnut", "due": "8/5", "status": ""},
+    {"order": "93691", "customer": "Hill", "finish": "Stain - Walnut", "due": "8/7", "status": ""},
+    {"order": "93709", "customer": "Hurst", "finish": "Stain - Natural", "due": "8/7", "status": ""},
+    {"order": "93746", "customer": "Morgan", "finish": "Stain - Walnut", "due": "8/10", "status": ""},
+    {"order": "93754", "customer": "Wentland", "finish": "Stain - Walnut", "due": "8/10", "status": ""},
+    {"order": "93772A", "customer": "Shellhart", "finish": "Paint - Black", "due": "8/11", "status": ""},
+    {"order": "93729A", "customer": "Group", "finish": "Paint - Black", "due": "8/11", "status": ""},
+    {"order": "93865", "customer": "Wallace", "finish": "Paint - Black", "due": "8/11", "status": ""},
+    {"order": "93885", "customer": "Wittbrodt", "finish": "Paint - Black", "due": "8/11", "status": ""},
+    {"order": "93948", "customer": "Hughes", "finish": "Stain - Clear", "due": "8/12", "status": ""},
+    {"order": "93945A", "customer": "Ward", "finish": "Paint - White", "due": "8/12", "status": ""},
+    {"order": "93929", "customer": "Sanders", "finish": "Stain - Walnut", "due": "8/13", "status": ""},
+    {"order": "94092", "customer": "Scherer", "finish": "Paint - White", "due": "8/17", "status": ""},
+    {"order": "94002", "customer": "Grinold", "finish": "Paint - White", "due": "8/17", "status": ""},
+    {"order": "94162", "customer": "Layton", "finish": "Paint - White", "due": "8/17", "status": ""},
+    {"order": "94146A", "customer": "Jones", "finish": "Paint - White", "due": "8/17", "status": ""},
+    {"order": "94237", "customer": "Reep", "finish": "Stain - Walnut", "due": "8/18", "status": ""},
+    {"order": "94201", "customer": "Ben", "finish": "Paint - Black", "due": "8/18", "status": ""}
   ],
+
   building: [
-    {"order":"93525A","customer":"Bruni PG Valance Cover","dept":"Assembly","doors":1,"due":"6/24","status":"rush"},
-    {"order":"92819A","customer":"Stricklin 40\" PG Mid-Century","dept":"Assembly","doors":1,"due":"6/29","status":"rush"},
-    {"order":"93923","customer":"Potocki 36\" PG Lipped Shelf","dept":"Assembly","doors":3,"due":"7/1","status":""},
-    {"order":"93993A","customer":"Matney 24\" PG Ready to Ship","dept":"Sanding","doors":1,"due":"7/6","status":""},
-    {"order":"92153","customer":"McDowell 31\"","dept":"Sanding","doors":1,"due":"7/13","status":""},
-    {"order":"93169A","customer":"Dixon 41\" PG Hamper","dept":"Sanding","doors":1,"due":"7/13","status":""},
-    {"order":"92845","customer":"Conran 68\" PG Surface Mount French V2","dept":"Assembly","doors":2,"due":"7/20","status":""},
-    {"order":"93967A","customer":"Case 45\" Nizza 10\" Deep w/Flat Back MD","dept":"Sanding","doors":1,"due":"7/22","status":""},
-    {"order":"93875","customer":"Bravo 32\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"7/30","status":""},
-    {"order":"93832","customer":"Sheehan 24\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"7/30","status":""},
-    {"order":"93992A","customer":"Steenbergh 30\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"7/30","status":""},
-    {"order":"94021","customer":"Pohle 36\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"7/30","status":""},
-    {"order":"93245","customer":"Thornburg 32-1\" Nova","dept":"Sanding","doors":1,"due":"7/30","status":""},
-    {"order":"94042","customer":"Gruenloh 32\" PG Seamless Panel","dept":"Assembly","doors":1,"due":"7/31","status":""},
-    {"order":"93401","customer":"Badrinathan Twin Horizontal Shaker Alder","dept":"Assembly","doors":1,"due":"7/31","status":""},
-    {"order":"93490B","customer":"Frost 40\" PG Surface Mount","dept":"Sanding","doors":1,"due":"8/4","status":""},
-    {"order":"93521","customer":"Menegus 44\" PG Surface Mount","dept":"Assembly","doors":1,"due":"8/4","status":""},
-    {"order":"93557A","customer":"Melbourn 30\" PG Mirror 6-1/2\" Deep","dept":"Assembly","doors":1,"due":"8/4","status":""},
-    {"order":"93579","customer":"Pugh 56\" PG French","dept":"Assembly","doors":1,"due":"8/5","status":""},
-    {"order":"93593A","customer":"Jansen 69-.5\" PG French","dept":"Assembly","doors":1,"due":"8/5","status":""},
-    {"order":"93662","customer":"Walker 48-1\" PG","dept":"Assembly","doors":1,"due":"8/6","status":""},
-    {"order":"92722A","customer":"Wilczak 30\" PG Refreshment","dept":"Assembly","doors":1,"due":"8/7","status":""},
-    {"order":"93794","customer":"Orifici 24\" PG","dept":"Assembly","doors":1,"due":"8/10","status":""},
-    {"order":"93742","customer":"Watson 20\" PG Murphy Shelf","dept":"Assembly","doors":1,"due":"8/10","status":""},
-    {"order":"93871","customer":"Schwartz 36\" Nova","dept":"Sanding","doors":1,"due":"8/11","status":""},
-    {"order":"93971A","customer":"Coyle 30\" PG","dept":"Sanding","doors":1,"due":"8/13","status":""},
-    {"order":"94087","customer":"O'Connor 31\" PG","dept":"Sanding","doors":1,"due":"8/17","status":""},
-    {"order":"94112","customer":"Widmann 32\" PG","dept":"Sanding","doors":1,"due":"8/17","status":""}
+    {"order": "93525A", "customer": "Bruni", "dept": "Assembly", "doors": 1, "due": "6/24", "status": "rush"},
+    {"order": "92819A", "customer": "Stricklin", "dept": "Assembly", "doors": 1, "due": "6/29", "status": "rush"},
+    {"order": "92058A", "customer": "Legatt", "dept": "Assembly", "doors": 1, "due": "7/6", "status": ""},
+    {"order": "94256", "customer": "Carr", "dept": "Sanding", "doors": 1, "due": "7/7", "status": ""},
+    {"order": "94240", "customer": "Taylor", "dept": "Sanding", "doors": 1, "due": "7/7", "status": ""},
+    {"order": "93267", "customer": "SCHMERTZLER", "dept": "Assembly", "doors": 2, "due": "7/15", "status": ""},
+    {"order": "93967A", "customer": "Case", "dept": "Sanding", "doors": 1, "due": "7/22", "status": ""},
+    {"order": "94134B", "customer": "Davis", "dept": "Sanding", "doors": 1, "due": "7/28", "status": ""},
+    {"order": "93265", "customer": "Mgrdichian", "dept": "Assembly", "doors": 1, "due": "7/28", "status": ""},
+    {"order": "93875", "customer": "Bravo", "dept": "Assembly", "doors": 1, "due": "7/30", "status": ""},
+    {"order": "93832", "customer": "Sheehan", "dept": "Assembly", "doors": 1, "due": "7/30", "status": ""},
+    {"order": "93992A", "customer": "Steenbergh", "dept": "Assembly", "doors": 1, "due": "7/30", "status": ""},
+    {"order": "94021", "customer": "Pohle", "dept": "Assembly", "doors": 1, "due": "7/30", "status": ""},
+    {"order": "94042", "customer": "Gruenloh", "dept": "Assembly", "doors": 1, "due": "7/31", "status": ""},
+    {"order": "93593A", "customer": "Jansen 69-.5\"", "dept": "Assembly", "doors": 1, "due": "8/5", "status": ""},
+    {"order": "92722A", "customer": "Wilczak 30\"", "dept": "Assembly", "doors": 1, "due": "8/7", "status": ""},
+    {"order": "93742", "customer": "Watson", "dept": "Assembly", "doors": 1, "due": "8/10", "status": ""},
+    {"order": "93971A", "customer": "Coyle", "dept": "Sanding", "doors": 1, "due": "8/13", "status": ""},
+    {"order": "94250", "customer": "Frost", "dept": "Sanding", "doors": 1, "due": "8/18", "status": ""},
+    {"order": "94127", "customer": "Schwartz", "dept": "Sanding", "doors": 1, "due": "8/18", "status": ""},
+    {"order": "94217", "customer": "Embers", "dept": "Sanding", "doors": 2, "due": "8/18", "status": ""}
   ],
+
   priorities: [
-    {"order":"93373","customer":"Schuppi 42-1\"","dept":"Paint/Stain","status":"rush"},
-    {"order":"93392","customer":"Loebl 36\" PG Archway","dept":"QA","status":"rush"},
-    {"order":"93078A","customer":"Shelstad Maple Shaker Face Panels","dept":"Paint/Stain","status":"rush"},
-    {"order":"93228","customer":"Demarco 37\" PG Shaker Cabinets","dept":"QA","status":"rush"},
-    {"order":"93525A","customer":"Bruni PG Valance Cover","dept":"Assembly","status":"rush"},
-    {"order":"93681A","customer":"Brashear 30\" PG Top Jamb and Threshold","dept":"Packaging","status":"rush"},
-    {"order":"92819A","customer":"Stricklin 40\" PG Mid-Century","dept":"Assembly","status":"rush"},
-    {"order":"94195","customer":"Langenderfer 32\" PG Surface Mount","dept":"Paint/Stain","status":"rush"}
+    {"order": "93373", "customer": "Schuppi", "dept": "Paint/Stain", "status": "rush"},
+    {"order": "93392", "customer": "Loebl", "dept": "QA", "status": "rush"},
+    {"order": "93078A", "customer": "Shelstad", "dept": "QA", "status": "rush"},
+    {"order": "93228", "customer": "Demarco", "dept": "QA", "status": "rush"},
+    {"order": "93525A", "customer": "Bruni", "dept": "Assembly", "status": "rush"},
+    {"order": "92819A", "customer": "Stricklin", "dept": "Assembly", "status": "rush"},
+    {"order": "94195", "customer": "Langenderfer", "dept": "Paint/Stain", "status": "rush"},
+    {"order": "93301", "customer": "Grider", "dept": "Paint/Stain", "status": "rush"}
   ],
+
+  // Active KY warranty orders — updated nightly with the EOD run
   warranties: [
 
   ],
+
   ticker: [
     "RPE goal: <b>$4,000/day</b> — every order counts",
     "RUSH orders jump the line — check the board before starting your next build",
@@ -224,28 +236,220 @@ const CONFIG = {
     "Safety first: clear walkways, glasses on at every machine"
   ]
 };
+
+/* =================== HELPERS =================== */
 const fmt$ = n => "$" + Math.round(n).toLocaleString();
-const hasFeed = key => { const u = CONFIG.live.feeds[key]; return u && !u.includes("PASTE"); };
-function parseCSV(text){ const rows = []; let row = [], field = "", inQ = false; for(let i = 0; i < text.length; i++){ const c = text[i]; if(inQ){ if(c === '"'){ if(text[i+1] === '"'){ field += '"'; i++; } else inQ = false; } else field += c; }else{ if(c === '"') inQ = true; else if(c === ","){ row.push(field); field = ""; } else if(c === "\n" || c === "\r"){ if(field !== "" || row.length){ row.push(field); rows.push(row); row = []; field = ""; } } else field += c; } } if(field !== "" || row.length){ row.push(field); rows.push(row); } return rows; }
-function numbersPanel(){ const t = CONFIG.today; const rpe = CONFIG.live.headcount > 0 ? t.revenue / CONFIG.live.headcount : 0; const met = rpe >= CONFIG.live.rpeGoal; return `<h2>Where we stand right now</h2><div class="rev-card" style="flex:1"><div class="rev-label">Revenue Shipped Today</div><div class="rev-value" style="color:${met?'var(--green)':'var(--text)'}">${fmt$(t.revenue)}</div><div class="rev-doors">${t.doorsShipped} <small>doors shipped</small></div><div class="rev-status ${met?'status-on':'status-behind'}">RPE ${fmt$(rpe)} / ${fmt$(CONFIG.live.rpeGoal)} goal</div></div>`; }
-function prioritiesPanel(){ const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>' : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : '<span class="badge b-today">Due Today</span>'; const rows = CONFIG.priorities.map(p=>`<tr><td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${badge(p.status)}</td></tr>`).join(""); return `<h2>Build these first</h2><table><thead><tr><th>Order #</th><th>Customer</th><th>Department</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`; }
-function paintPanel(){ const MAX = 8; const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>' : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : ''; const shown = CONFIG.paint.slice(0, MAX); const rows = shown.map((p,i)=>`<tr><td class="order" style="color:#64b5f6">${i+1}</td><td class="order">${p.order}</td><td>${p.customer}</td><td>${p.finish}</td><td>${p.due}</td><td>${badge(p.status)}</td></tr>`).join(""); const more = CONFIG.paint.length > MAX ? `<div class="more-note">+ ${CONFIG.paint.length - MAX} more in queue</div>` : ""; return `<h2>Paint / Stain — today's order of attack</h2><table><thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead><tbody>${rows}</tbody></table>${more}`; }
-function buildingPanel(){ const MAX = 8; const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>' : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : ''; const shown = CONFIG.building.slice(0, MAX); const rows = shown.map((p,i)=>`<tr><td class="order" style="color:#64b5f6">${i+1}</td><td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${p.doors}</td><td>${p.due}</td><td>${badge(p.status)}</td></tr>`).join(""); const more = CONFIG.building.length > MAX ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : ""; return `<h2>Sanding / Assembly — today's order of attack</h2><table><thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead><tbody>${rows}</tbody></table>${more}`; }
-function warrantyPanel(){ const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>' : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : s==="today" ? '<span class="badge b-today">Due Today</span>' : '<span class="badge b-prog">In Progress</span>'; const rows = CONFIG.warranties.map(w=>`<tr><td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td></tr>`).join(""); return `<h2>Active KY warranties — keep these moving</h2><table><thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`; }
-const PANELS = [ { id:"numbers", title:"Daily Numbers", render:numbersPanel, available:()=>true }, { id:"priority", title:"Top Priorities", render:prioritiesPanel, available:()=>CONFIG.priorities.length>0 }, { id:"building", title:"Sanding / Assembly", render:buildingPanel, available:()=>CONFIG.building.length>0 }, { id:"paint", title:"Paint Priorities", render:paintPanel, available:()=>CONFIG.paint.length>0 }, { id:"warranty", title:"Warranties", render:warrantyPanel, available:()=>CONFIG.warranties.length>0 } ];
-const stage = document.getElementById("stage"); PANELS.forEach(p=>{ const el = document.createElement("section"); el.className = "panel"; el.id = "panel-" + p.id; el.innerHTML = p.render(); stage.appendChild(el); });
-let current = "numbers"; const rotFill = document.querySelector("#rotbar > span");
-function showPanel(id){ current = id; const p = PANELS.find(x=>x.id===id); document.querySelectorAll(".panel").forEach(el=>el.classList.remove("active")); document.getElementById("panel-"+id).classList.add("active"); document.getElementById("panelTitle").textContent = p.title; rotFill.style.transition = "none"; rotFill.style.width = "0%"; requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ rotFill.style.transition = `width ${CONFIG.panelSeconds}s linear`; rotFill.style.width = "100%"; }); }); }
-function nextPanel(){ const avail = PANELS.filter(p=>p.available()); if(!avail.length) return; const i = avail.findIndex(p=>p.id===current); showPanel(avail[(i+1) % avail.length].id); }
-showPanel("numbers"); setInterval(nextPanel, CONFIG.panelSeconds*1000);
-async function fetchCSV(url){ const bust = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(); const res = await fetch(bust, { cache:"no-store" }); if(!res.ok) throw new Error("HTTP " + res.status); return parseCSV((await res.text()).trim()); }
+const hasFeed = key => {
+  const u = CONFIG.live.feeds[key];
+  return u && !u.includes("PASTE");
+};
+/* Minimal CSV parser that handles quoted fields with commas */
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = "", inQ = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(inQ){
+      if(c === '"'){ if(text[i+1] === '"'){ field += '"'; i++; } else inQ = false; }
+      else field += c;
+    }else{
+      if(c === '"') inQ = true;
+      else if(c === ","){ row.push(field); field = ""; }
+      else if(c === "\n" || c === "\r"){
+        if(field !== "" || row.length){ row.push(field); rows.push(row); row = []; field = ""; }
+      }
+      else field += c;
+    }
+  }
+  if(field !== "" || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+/* =================== PANELS =================== */
+function numbersPanel(){
+  const t = CONFIG.today;
+  const rpe = CONFIG.live.headcount > 0 ? t.revenue / CONFIG.live.headcount : 0;
+  const met = rpe >= CONFIG.live.rpeGoal;
+  return `<h2>Where we stand right now</h2>
+    <div class="rev-card" style="flex:1">
+      <div class="rev-label">Revenue Shipped Today</div>
+      <div class="rev-value" style="color:${met?'var(--green)':'var(--text)'}">${fmt$(t.revenue)}</div>
+      <div class="rev-doors">${t.doorsShipped} <small>doors shipped</small></div>
+      <div class="rev-status ${met?'status-on':'status-behind'}">RPE ${fmt$(rpe)} / ${fmt$(CONFIG.live.rpeGoal)} goal</div>
+    </div>`;
+}
+
+function prioritiesPanel(){
+  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
+    : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
+    : '<span class="badge b-today">Due Today</span>';
+  const rows = CONFIG.priorities.map(p=>`<tr>
+      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${badge(p.status)}</td>
+    </tr>`).join("");
+  return `<h2>Build these first</h2>
+    <table>
+      <thead><tr><th>Order #</th><th>Customer</th><th>Department</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function paintPanel(){
+  const MAX = 8;
+  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
+    : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : '';
+  const shown = CONFIG.paint.slice(0, MAX);
+  const rows = shown.map((p,i)=>`<tr>
+      <td class="order" style="color:#64b5f6">${i+1}</td>
+      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.finish}</td><td>${p.due}</td><td>${badge(p.status)}</td>
+    </tr>`).join("");
+  const more = CONFIG.paint.length > MAX
+    ? `<div class="more-note">+ ${CONFIG.paint.length - MAX} more in queue</div>` : "";
+  return `<h2>Paint / Stain — today's order of attack</h2>
+    <table>
+      <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Finish</th><th>Due</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>${more}`;
+}
+
+function buildingPanel(){
+  const MAX = 8;
+  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
+    : s==="overdue" ? '<span class="badge b-over">Overdue</span>' : '';
+  const shown = CONFIG.building.slice(0, MAX);
+  const rows = shown.map((p,i)=>`<tr>
+      <td class="order" style="color:#64b5f6">${i+1}</td>
+      <td class="order">${p.order}</td><td>${p.customer}</td><td>${p.dept}</td><td>${p.doors}</td><td>${p.due}</td><td>${badge(p.status)}</td>
+    </tr>`).join("");
+  const more = CONFIG.building.length > MAX
+    ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : "";
+  return `<h2>Sanding / Assembly — today's order of attack</h2>
+    <table>
+      <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>${more}`;
+}
+
+function warrantyPanel(){
+  const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
+    : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
+    : s==="today" ? '<span class="badge b-today">Due Today</span>'
+    : '<span class="badge b-prog">In Progress</span>';
+  const rows = CONFIG.warranties.map(w=>`<tr>
+      <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
+    </tr>`).join("");
+  return `<h2>Active KY warranties — keep these moving</h2>
+    <table>
+      <thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* Panels skip themselves when their feed isn't connected or has no rows */
+const PANELS = [
+  { id:"numbers",  title:"Daily Numbers",    render:numbersPanel,    available:()=>true },
+  { id:"priority", title:"Top Priorities",   render:prioritiesPanel, available:()=>CONFIG.priorities.length>0 },
+  { id:"building", title:"Sanding / Assembly", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
+  { id:"paint",    title:"Paint Priorities", render:paintPanel,      available:()=>CONFIG.paint.length>0 },
+  { id:"warranty", title:"Warranties",       render:warrantyPanel,   available:()=>CONFIG.warranties.length>0 }
+];
+
+/* Build panel containers */
+const stage = document.getElementById("stage");
+PANELS.forEach(p=>{
+  const el = document.createElement("section");
+  el.className = "panel";
+  el.id = "panel-" + p.id;
+  el.innerHTML = p.render();
+  stage.appendChild(el);
+});
+
+/* Rotation across available panels only */
+let current = "numbers";
+const rotFill = document.querySelector("#rotbar > span");
+function showPanel(id){
+  current = id;
+  const p = PANELS.find(x=>x.id===id);
+  document.querySelectorAll(".panel").forEach(el=>el.classList.remove("active"));
+  document.getElementById("panel-"+id).classList.add("active");
+  document.getElementById("panelTitle").textContent = p.title;
+  rotFill.style.transition = "none";
+  rotFill.style.width = "0%";
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
+    rotFill.style.transition = `width ${CONFIG.panelSeconds}s linear`;
+    rotFill.style.width = "100%";
+  });});
+}
+function nextPanel(){
+  const avail = PANELS.filter(p=>p.available());
+  if(!avail.length) return;
+  const i = avail.findIndex(p=>p.id===current);
+  showPanel(avail[(i+1) % avail.length].id);
+}
+showPanel("numbers");
+setInterval(nextPanel, CONFIG.panelSeconds*1000);
+
+/* =================== LIVE FEED POLLING =================== */
+async function fetchCSV(url){
+  const bust = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+  const res = await fetch(bust, { cache:"no-store" });
+  if(!res.ok) throw new Error("HTTP " + res.status);
+  return parseCSV((await res.text()).trim());
+}
 const num = s => parseFloat(String(s).replace(/["$,\s]/g,"")) || 0;
-async function pollLive(){ let anyOk = false; if(hasFeed("numbers")){ try{ const rows = await fetchCSV(CONFIG.live.feeds.numbers); let last = null; for(const r of rows.slice(1)){ if(r.length>=3 && String(r[1]).trim()!=="") last = r; } if(last){ CONFIG.today.doorsShipped = num(last[1]); CONFIG.today.revenue = num(last[2]); anyOk = true; } }catch(e){ console.warn("numbers feed:", e); } } PANELS.forEach(p=>{ document.getElementById("panel-"+p.id).innerHTML = p.render(); }); const cur = PANELS.find(p=>p.id===current); if(cur && !cur.available()) nextPanel(); document.getElementById("liveDot").classList.toggle("on", anyOk); }
-pollLive(); setInterval(pollLive, CONFIG.live.pollMinutes * 60 * 1000);
-document.getElementById("ticker").innerHTML = CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;"+t).join("");
-async function keepAwake(){ if(!("wakeLock" in navigator)) return; const grab = async () => { try{ await navigator.wakeLock.request("screen"); }catch(e){ console.warn("wakeLock:", e); } }; await grab(); document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible") grab(); }); }
+
+async function pollLive(){
+  let anyOk = false;
+
+  if(hasFeed("numbers")){
+    try{
+      const rows = await fetchCSV(CONFIG.live.feeds.numbers);
+      let last = null;
+      for(const r of rows.slice(1)){ if(r.length>=3 && String(r[1]).trim()!=="") last = r; }
+      if(last){
+        CONFIG.today.doorsShipped = num(last[1]);
+        CONFIG.today.revenue = num(last[2]);
+        anyOk = true;
+      }
+    }catch(e){ console.warn("numbers feed:", e); }
+  }
+
+  /* Re-render all panels with fresh data */
+  PANELS.forEach(p=>{ document.getElementById("panel-"+p.id).innerHTML = p.render(); });
+  /* If the current panel just became unavailable, advance */
+  const cur = PANELS.find(p=>p.id===current);
+  if(cur && !cur.available()) nextPanel();
+  document.getElementById("liveDot").classList.toggle("on", anyOk);
+}
+pollLive();
+setInterval(pollLive, CONFIG.live.pollMinutes * 60 * 1000);
+
+/* Ticker */
+document.getElementById("ticker").innerHTML =
+  CONFIG.ticker.map(t=>"&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;"+t).join("");
+
+/* Keep the screen awake — the page itself asks the device not to sleep.
+   Works in Chromium-based browsers (incl. Silk). Re-acquires on tab focus
+   and survives the 10-min page reload since it runs on every load. */
+async function keepAwake(){
+  if(!("wakeLock" in navigator)) return;
+  const grab = async () => {
+    try{ await navigator.wakeLock.request("screen"); }
+    catch(e){ console.warn("wakeLock:", e); }
+  };
+  await grab();
+  document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible") grab();
+  });
+}
 keepAwake();
-function tick(){ const now = new Date(); document.getElementById("clock").textContent = now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}); document.getElementById("dateline").textContent = now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}); }
+
+/* Clock */
+function tick(){
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  document.getElementById("dateline").textContent =
+    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+}
 tick(); setInterval(tick,1000);
 </script>
 </body>
