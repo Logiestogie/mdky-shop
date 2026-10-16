@@ -91,6 +91,15 @@
   .b-rush{background:rgba(255,179,0,.16);color:var(--amber);border:1px solid rgba(255,179,0,.45)}
   .b-over{background:rgba(239,83,80,.14);color:var(--red);border:1px solid rgba(239,83,80,.45)}
   .b-today{background:rgba(25,118,210,.18);color:#64b5f6;border:1px solid rgba(100,181,246,.45)}
+  .wspot{flex:1;display:flex;gap:3vw;min-height:0}
+  .wphoto{flex:0 0 auto;display:flex;flex-direction:column;gap:1vh;min-height:0}
+  .wphoto img{height:62vh;width:auto;border-radius:14px;border:1px solid var(--line);display:block}
+  .wcap{font-family:'Barlow Condensed',sans-serif;font-size:2.2vh;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center}
+  .wdetail{flex:1;display:flex;flex-direction:column;gap:2.4vh;justify-content:center}
+  .worder{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:5vh}
+  .wissue{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:6vh;line-height:1.05}
+  .wmeta{font-family:'Barlow Condensed',sans-serif;font-size:3vh;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .wnote{background:var(--panel);border:1px solid rgba(255,179,0,.45);border-left:1vh solid var(--amber);border-radius:12px;padding:2.2vh 1.6vw;font-size:3.2vh;font-weight:600;line-height:1.3}
   .b-prog{background:rgba(142,150,179,.14);color:var(--muted);border:1px solid rgba(142,150,179,.4)}
 
   /* ===== TICKER + ROTATION BAR ===== */
@@ -143,7 +152,7 @@
    =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
-  updatedAt: "2026-10-16T13:36:47Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-10-16T13:56:33Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -256,7 +265,7 @@ const CONFIG = {
 
   // Active KY warranty orders — updated nightly with the EOD run
   warranties: [
-
+    {"order": "99708 / 97289", "issue": "Customer did not receive their lock bars", "dept": "Packaging", "status": "inprogress", "photo": "warranty-99708.jpg", "note": "Lock bars and ALL hardware must be clearly visible in the box in the final inspection photo — it's our proof. They are not visible here."}
   ],
 
   ticker: [
@@ -364,10 +373,25 @@ function warrantyPanel(){
     : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
     : s==="today" ? '<span class="badge b-today">Due Today</span>'
     : '<span class="badge b-prog">In Progress</span>';
+  const photoW = CONFIG.warranties.filter(w=>w.photo);
+  if(photoW.length){
+    /* Spotlight layout: photo beside the issue + the lesson for the shop */
+    const w = photoW[0];
+    return `<h2>Last week's production warranty — learn from it</h2>
+      <div class="wspot">
+        <div class="wphoto"><img src="${w.photo}" alt="Final inspection photo"><div class="wcap">Final inspection photo</div></div>
+        <div class="wdetail">
+          <div class="worder">${w.order}</div>
+          <div class="wissue">${w.issue}</div>
+          <div class="wmeta">${w.dept}${w.status==="rush"?" &nbsp;"+badge(w.status):""}</div>
+          ${w.note ? `<div class="wnote">${w.note}</div>` : ""}
+        </div>
+      </div>`;
+  }
   const rows = CONFIG.warranties.map(w=>`<tr>
       <td class="order">${w.order}</td><td>${w.issue}</td><td>${w.dept}</td><td>${badge(w.status)}</td>
     </tr>`).join("");
-  return `<h2>Active KY warranties — keep these moving</h2>
+  return `<h2>Active KY warranties \u2014 keep these moving</h2>
     <table>
       <thead><tr><th>Order #</th><th>Issue</th><th>Department</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
