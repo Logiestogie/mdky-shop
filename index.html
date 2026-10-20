@@ -152,7 +152,7 @@
    =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
-  updatedAt: "2026-10-19T18:16:55Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-10-19T18:33:38Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -263,7 +263,9 @@ const CONFIG = {
 
   // Active KY warranty orders — updated nightly with the EOD run
   warranties: [
-    {"order": "99708 / 97289", "issue": "Customer did not receive their lock bars", "dept": "Packaging", "status": "inprogress", "photo": "warranty-99708.jpg", "note": "Lock bars and ALL hardware must be clearly visible in the box in the final inspection photo — it's our proof. They are not visible here."}
+    {"order": "98088A", "issue": "Customer did not receive their book latch hardware", "dept": "Packaging", "status": "inprogress", "photo": "warranty-98088A.jpg", "note": "No book latch hardware in the box in the final inspection photo. Check the paperwork and verify EVERYTHING the customer ordered is packed with the door."},
+    {"order": "99034", "issue": "Customer ordered a 36\" door — a 32\" was shipped", "dept": "Packaging", "status": "inprogress", "photo": "warranty-99034.jpg", "note": "Mix-up in packaging sent the wrong size. Read the paperwork and confirm the door size matches the order before it goes in the box."},
+    {"order": "97504", "issue": "Backup battery was not sent", "dept": "Packaging", "status": "inprogress", "photo": "warranty-97504.jpg", "note": "No backup battery pictured with the hardware. Pay attention to what you're working on — check the order against what's in the box."}
   ],
 
   ticker: [
@@ -366,7 +368,7 @@ function buildingPanel(){
     </table>${more}`;
 }
 
-function warrantyPanel(){
+function warrantyPanel(idx){
   const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
     : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
     : s==="today" ? '<span class="badge b-today">Due Today</span>'
@@ -374,7 +376,7 @@ function warrantyPanel(){
   const photoW = CONFIG.warranties.filter(w=>w.photo);
   if(photoW.length){
     /* Spotlight layout: photo beside the issue + the lesson for the shop */
-    const w = photoW[0];
+    const w = photoW[idx||0];
     return `<h2>Last week's production warranty — learn from it</h2>
       <div class="wspot">
         <div class="wphoto"><img src="${w.photo}" alt="Final inspection photo"><div class="wcap">Final inspection photo</div></div>
@@ -402,8 +404,12 @@ const PANELS = [
   { id:"priority", title:"Top Priorities",   render:prioritiesPanel, available:()=>CONFIG.priorities.length>0 },
   { id:"building", title:"Sanding / Assembly", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
   { id:"paint",    title:"Paint Priorities", render:paintPanel,      available:()=>CONFIG.paint.length>0 },
-  { id:"warranty", title:"Warranties",       render:warrantyPanel,   available:()=>CONFIG.warranties.length>0 }
+  { id:"warranty", title:"Warranties",       render:()=>warrantyPanel(0),   available:()=>CONFIG.warranties.length>0 }
 ];
+/* one extra panel per additional photo warranty */
+for(let i=1;i<CONFIG.warranties.length;i++){
+  PANELS.push({ id:"warranty"+i, title:"Warranties ("+(i+1)+" of "+CONFIG.warranties.length+")", render:()=>warrantyPanel(i), available:()=>!!CONFIG.warranties[i] });
+}
 
 /* Build panel containers */
 const stage = document.getElementById("stage");
