@@ -94,6 +94,14 @@
   .wspot{flex:1;display:flex;gap:3vw;min-height:0}
   .wphoto{flex:0 0 auto;display:flex;flex-direction:column;gap:1vh;min-height:0}
   .wphoto img{height:62vh;width:auto;border-radius:14px;border:1px solid var(--line);display:block}
+  .wspot.two{flex-direction:column;gap:1.6vh}
+  .wphotos{margin-top:1.5vh;display:flex;gap:2vw;justify-content:center;flex:0 0 auto}
+  .wspot.two .wphoto img{height:38vh}
+  .wspot.two .wdetail{gap:.8vh;justify-content:flex-start}
+  .wspot.two .worder{font-size:4vh}
+  .wspot.two .wissue{font-size:4.6vh}
+  .wspot.two .wnote{font-size:2.5vh}
+  .wspot.two .wcap{font-size:1.8vh}
   .wcap{font-family:'Barlow Condensed',sans-serif;font-size:2.2vh;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center}
   .wdetail{flex:1;display:flex;flex-direction:column;gap:2.4vh;justify-content:center}
   .worder{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:5vh}
@@ -169,7 +177,7 @@
    =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
-  updatedAt: "2026-11-02T14:30:30Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-11-02T14:35:40Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -313,7 +321,7 @@ const CONFIG = {
 
   // Active KY warranty orders — updated nightly with the EOD run
   warranties: [
-    {"order": "100846", "issue": "Customer did not receive their black Hillmont 12\" pulls for their beds", "dept": "Packaging", "status": "inprogress", "photo": "warranty-100846.png", "note": "Paperwork called for black Hillmont 12\" pulls, but none were in the hardware picture. Check the paperwork and verify EVERYTHING the customer ordered is packed with the bed."}
+    {"order": "100846", "issue": "Customer did not receive their black Hillmont 12\" pulls for their beds", "dept": "Packaging", "status": "inprogress", "photo": "warranty-100846.jpg", "photo2": "invoice-100846.jpg", "cap2": "Paperwork: Hillmont Pull 12\", Black", "note": "Paperwork called for black Hillmont 12\" pulls, but none were in the hardware picture. Check the paperwork and verify EVERYTHING the customer ordered is packed with the bed."}
   ],
 
   ticker: [
@@ -455,8 +463,8 @@ function warrantyPanel(idx){
     /* Spotlight layout: photo beside the issue + the lesson for the shop */
     const w = photoW[idx||0];
     return `<h2>Last week's production warranty — learn from it</h2>
-      <div class="wspot">
-        <div class="wphoto"><img src="${w.photo}" alt="Final inspection photo"><div class="wcap">Final inspection photo</div></div>
+      <div class="wspot${w.photo2?" two":""}">
+        ${w.photo2 ? `<div class="wphotos"><div class="wphoto"><img src="${w.photo}" alt="Final inspection photo"><div class="wcap">Final inspection photo</div></div><div class="wphoto"><img src="${w.photo2}" alt="Paperwork"><div class="wcap">${w.cap2||"Paperwork"}</div></div></div>` : `<div class="wphoto"><img src="${w.photo}" alt="Final inspection photo"><div class="wcap">Final inspection photo</div></div>`}
         <div class="wdetail">
           <div class="worder">${w.order}</div>
           <div class="wissue">${w.issue}</div>
