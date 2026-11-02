@@ -177,7 +177,8 @@
    =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
-  updatedAt: "2026-11-02T14:42:49Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  timeZone: "America/New_York",   // RULE (Logan 11/2): clock + "Lists updated" always show Kentucky time, never the viewing device's zone (TV sometimes flipped to Utah)
+  updatedAt: "2026-11-02T14:44:50Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -607,9 +608,9 @@ keepAwake();
 function tick(){
   const now = new Date();
   document.getElementById("clock").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:CONFIG.timeZone});
   document.getElementById("dateline").textContent =
-    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+    now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",timeZone:CONFIG.timeZone});
 }
 tick(); setInterval(tick,1000);
 
@@ -619,7 +620,7 @@ function freshness(){
   const u=new Date(CONFIG.updatedAt), now=new Date();
   const el=document.getElementById("updated"), bar=document.getElementById("stale");
   if(isNaN(u)){ el.textContent=""; return; }
-  el.textContent="Lists updated "+u.toLocaleDateString("en-US",{month:"numeric",day:"numeric"})+" "+u.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  el.textContent="Lists updated "+u.toLocaleDateString("en-US",{month:"numeric",day:"numeric",timeZone:CONFIG.timeZone})+" "+u.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:CONFIG.timeZone});
   let exp=new Date(now); exp.setHours(17,0,0,0);
   if(now<exp) exp.setDate(exp.getDate()-1);
   while(exp.getDay()===0||exp.getDay()===6) exp.setDate(exp.getDate()-1);
@@ -627,7 +628,7 @@ function freshness(){
   const stale = u < exp;
   if(stale){
     const days=Math.floor((now-u)/86400000);
-    bar.textContent="LISTS OUT OF DATE — last updated "+u.toLocaleDateString("en-US",{month:"numeric",day:"numeric"})+(days>0?" ("+days+" day"+(days>1?"s":"")+" ago)":"")+" — orders shown may be gone";
+    bar.textContent="LISTS OUT OF DATE — last updated "+u.toLocaleDateString("en-US",{month:"numeric",day:"numeric",timeZone:CONFIG.timeZone})+(days>0?" ("+days+" day"+(days>1?"s":"")+" ago)":"")+" — orders shown may be gone";
   }
   bar.classList.toggle("on",stale);
 }
