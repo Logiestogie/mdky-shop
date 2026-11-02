@@ -177,7 +177,7 @@
    =================================================================== */
 const CONFIG = {
   panelSeconds: 20,
-  updatedAt: "2026-11-02T14:39:12Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-11-02T14:42:49Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -530,7 +530,20 @@ function nextPanel(){
   showPanel(avail[(i+1) % avail.length].id);
 }
 showPanel("numbers");
-setInterval(nextPanel, CONFIG.panelSeconds*1000);
+let rotTimer = setInterval(nextPanel, CONFIG.panelSeconds*1000);
+/* Manual skip for PC viewing: Right/Space/click = next, Left = previous (restarts the auto timer) */
+function skipPanel(dir){
+  const avail = PANELS.filter(p=>p.available());
+  if(!avail.length) return;
+  const i = Math.max(0, avail.findIndex(p=>p.id===current));
+  showPanel(avail[(i+dir+avail.length) % avail.length].id);
+  clearInterval(rotTimer); rotTimer = setInterval(nextPanel, CONFIG.panelSeconds*1000);
+}
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); skipPanel(1); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); skipPanel(-1); }
+});
+document.addEventListener("click", e=>{ skipPanel(e.clientX < window.innerWidth*0.25 ? -1 : 1); });
 
 /* =================== LIVE FEED POLLING =================== */
 async function fetchCSV(url){
