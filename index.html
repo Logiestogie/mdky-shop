@@ -555,6 +555,7 @@ async function fetchCSV(url){
 }
 const num = s => parseFloat(String(s).replace(/["$,\s]/g,"")) || 0;
 
+let feedErr="";
 async function pollLive(){
   let anyOk = false;
 
@@ -568,8 +569,10 @@ async function pollLive(){
         CONFIG.today.revenue = num(last[2]);
         anyOk = true;
       }
-    }catch(e){ console.warn("numbers feed:", e); }
+    }catch(e){ console.warn("numbers feed:", e); feedErr="feed error: "+(e&&e.message||e)+" @"+new Date().toLocaleTimeString("en-US",{timeZone:CONFIG.timeZone}); }
+    if(anyOk) feedErr="";
   }
+  { let fe=document.getElementById("feedErr"); if(!fe){ fe=document.createElement("div"); fe.id="feedErr"; fe.style.cssText="font-size:1.1vh;color:#ff8a8a;text-align:right"; const u=document.getElementById("updated"); u.parentNode.appendChild(fe); } fe.textContent=feedErr; }
 
   /* Re-render all panels with fresh data */
   PANELS.forEach(p=>{ document.getElementById("panel-"+p.id).innerHTML = p.render(); });
