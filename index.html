@@ -178,7 +178,7 @@
 const CONFIG = {
   panelSeconds: 20,
   timeZone: "America/New_York",   // RULE (Logan 11/2): clock + "Lists updated" always show Kentucky time, never the viewing device's zone (TV sometimes flipped to Utah)
-  updatedAt: "2026-11-07T00:38:48Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-11-09T15:25:53Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -198,12 +198,12 @@ const CONFIG = {
   /* Dept queue stats + trend vs last EOD run — written by dash_arrays.py */
   deptStats: [
     {"name": "Sanding", "total": 13, "rush": 0, "overdue": 0},
-    {"name": "Assembly", "total": 24, "rush": 0, "overdue": 2},
-    {"name": "Paint/Stain", "total": 59, "rush": 6, "overdue": 9},
-    {"name": "QA", "total": 3, "rush": 0, "overdue": 0},
+    {"name": "Assembly", "total": 25, "rush": 0, "overdue": 2},
+    {"name": "Paint/Stain", "total": 57, "rush": 6, "overdue": 11},
+    {"name": "QA", "total": 4, "rush": 0, "overdue": 1},
     {"name": "Packaging", "total": 9, "rush": 1, "overdue": 2}
   ],
-  trends: {"Sanding": -4, "Assembly": -7, "Paint/Stain": 6, "QA": 1, "Packaging": 2, "Sanding/Assembly": -11},
+  trends: {"Sanding": 0, "Assembly": 1, "Paint/Stain": -2, "QA": 1, "Packaging": 0, "Sanding/Assembly": 1},
   /* Optional extras filled by the EOD routine from real sources only: winOfDay (text), recutsWeek (number) */
   extras: {},
 
@@ -223,10 +223,9 @@ const CONFIG = {
     {"order": "100425", "customer": "Hernandez", "finish": "Paint - Black", "due": "10/29", "status": "overdue"},
     {"order": "99768", "customer": "Ashby", "finish": "Paint - Black", "due": "10/30", "status": "overdue"},
     {"order": "98222B", "customer": "Mcintosh", "finish": "-", "due": "10/30", "status": "overdue"},
-    {"order": "98959A", "customer": "Castro", "finish": "Stain - Natural", "due": "11/6", "status": "today"},
+    {"order": "98959A", "customer": "Castro", "finish": "Stain - Natural", "due": "11/6", "status": "overdue"},
     {"order": "99630", "customer": "Cole", "finish": "Paint - White", "due": "11/12", "status": ""},
     {"order": "99252", "customer": "Lonergan", "finish": "Stain - Natural", "due": "11/12", "status": ""},
-    {"order": "99436", "customer": "Taylor", "finish": "Stain - Natural", "due": "11/13", "status": ""},
     {"order": "99992", "customer": "Asmann", "finish": "Paint - White", "due": "11/17", "status": ""},
     {"order": "99614A", "customer": "Williamson", "finish": "Primer Only", "due": "11/19", "status": ""},
     {"order": "99528A", "customer": "Dillard", "finish": "Stain - Natural", "due": "11/20", "status": ""},
@@ -265,21 +264,20 @@ const CONFIG = {
     {"order": "100849", "customer": "Blackburn", "finish": "Stain - Walnut", "due": "12/17", "status": ""},
     {"order": "100625A", "customer": "Culley", "finish": "Stain - Walnut", "due": "12/18", "status": ""},
     {"order": "100762", "customer": "Bertz", "finish": "Stain - Walnut", "due": "12/18", "status": ""},
-    {"order": "100825", "customer": "Sevigny", "finish": "Primer Only", "due": "12/18", "status": ""},
     {"order": "100506C", "customer": "Herod", "finish": "Stain - Walnut", "due": "12/18", "status": ""},
     {"order": "100574B", "customer": "Fisher", "finish": "Stain - Clear", "due": "12/18", "status": ""},
     {"order": "100954", "customer": "Hamm", "finish": "Paint - White", "due": "", "status": ""}
   ],
 
   building: [
-    {"order": "06734413", "customer": "GCC", "dept": "Assembly", "doors": 1, "due": "10/31", "status": "overdue"},
     {"order": "97879", "customer": "Sajan", "dept": "Assembly", "doors": 1, "due": "11/3", "status": "overdue"},
-    {"order": "08883710", "customer": "GCC", "dept": "Assembly", "doors": 1, "due": "11/6", "status": "today"},
+    {"order": "08883710", "customer": "GCC", "dept": "Assembly", "doors": 1, "due": "11/6", "status": "overdue"},
     {"order": "101036", "customer": "Lee", "dept": "Sanding", "doors": 1, "due": "11/10", "status": ""},
     {"order": "101002", "customer": "Cresse", "dept": "Sanding", "doors": 1, "due": "11/10", "status": ""},
     {"order": "99205B", "customer": "Malandro", "dept": "Assembly", "doors": 1, "due": "11/11", "status": ""},
     {"order": "99620", "customer": "Liggio", "dept": "Assembly", "doors": 1, "due": "11/11", "status": ""},
     {"order": "98854A", "customer": "Crites", "dept": "Assembly", "doors": 1, "due": "11/11", "status": ""},
+    {"order": "99436", "customer": "Taylor", "dept": "Assembly", "doors": 1, "due": "11/13", "status": ""},
     {"order": "98958C", "customer": "Valero", "dept": "Assembly", "doors": 1, "due": "11/13", "status": ""},
     {"order": "99826", "customer": "Gonzales", "dept": "Assembly", "doors": 1, "due": "11/13", "status": ""},
     {"order": "99976", "customer": "Lupear", "dept": "Sanding", "doors": 1, "due": "11/17", "status": ""},
@@ -308,7 +306,8 @@ const CONFIG = {
     {"order": "100653", "customer": "Reed", "dept": "Sanding", "doors": 1, "due": "12/17", "status": ""},
     {"order": "100803", "customer": "Jones", "dept": "Sanding", "doors": 2, "due": "12/17", "status": ""},
     {"order": "100498B", "customer": "Grant", "dept": "Sanding", "doors": 1, "due": "12/18", "status": ""},
-    {"order": "100913", "customer": "Rubin", "dept": "Sanding", "doors": 2, "due": "12/18", "status": ""}
+    {"order": "100913", "customer": "Rubin", "dept": "Sanding", "doors": 2, "due": "12/18", "status": ""},
+    {"order": "100825", "customer": "Sevigny", "dept": "Assembly", "doors": 1, "due": "12/18", "status": ""}
   ],
 
   priorities: [
@@ -316,10 +315,10 @@ const CONFIG = {
     {"order": "100744", "customer": "Allen", "dept": "Paint/Stain", "status": "rush"},
     {"order": "100787", "customer": "Simon", "dept": "Paint/Stain", "status": "rush"},
     {"order": "99937B", "customer": "Marchisotta", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "100919", "customer": "ZOPPETTI", "dept": "Packaging", "status": "rush"},
     {"order": "98987B", "customer": "Moss", "dept": "Paint/Stain", "status": "rush"},
     {"order": "100830", "customer": "Mecka", "dept": "Paint/Stain", "status": "rush"},
-    {"order": "92818", "customer": "Stadtherr", "dept": "Packaging", "status": "overdue"}
+    {"order": "92818", "customer": "Stadtherr", "dept": "Packaging", "status": "overdue"},
+    {"order": "91711A", "customer": "Arnold", "dept": "Paint/Stain", "status": "overdue"}
   ],
 
   // Active KY warranty orders — updated nightly with the EOD run
