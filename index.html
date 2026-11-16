@@ -108,6 +108,16 @@
   .wissue{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:6vh;line-height:1.05}
   .wmeta{font-family:'Barlow Condensed',sans-serif;font-size:3vh;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .wnote{background:var(--panel);border:1px solid rgba(255,179,0,.45);border-left:1vh solid var(--amber);border-radius:12px;padding:2.2vh 1.6vw;font-size:3.2vh;font-weight:600;line-height:1.3}
+  /* ===== ZERO-WARRANTY CELEBRATION (shown when CONFIG.warranties is []) ===== */
+  .wzero{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.2vh;text-align:center;overflow:hidden;border-radius:18px;border:1px solid rgba(67,196,99,.45);background:radial-gradient(ellipse at center,rgba(67,196,99,.16) 0%,rgba(67,196,99,0) 70%)}
+  .wzero .zbig{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30vh;line-height:.85;color:var(--green);text-shadow:0 0 4vh rgba(67,196,99,.55);animation:zpulse 2.4s ease-in-out infinite}
+  .wzero .zhead{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8vh;letter-spacing:.08em;text-transform:uppercase;line-height:1}
+  .wzero .zsub{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:3.6vh;letter-spacing:.06em;color:var(--muted);max-width:70vw}
+  .wzero .zthanks{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:4.2vh;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  .wzero > div{position:relative;z-index:1}
+  .wzero .conf{position:absolute;z-index:0;top:-6vh;width:1.1vh;height:2.2vh;border-radius:2px;opacity:.55;animation:zfall linear infinite}
+  @keyframes zpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  @keyframes zfall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
   .bars{width:100%;display:flex;flex-direction:column;gap:2.4vh;margin-top:1vh}
   .bar-row{display:flex;flex-direction:column;gap:.8vh}
   .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
@@ -142,6 +152,7 @@
   @media (prefers-reduced-motion: reduce){
     .ticker{animation:none;padding-left:2vw}
     .panel{transition:none}
+    .wzero .zbig{animation:none} .wzero .conf{display:none}
   }
 </style>
 </head>
@@ -178,7 +189,7 @@
 const CONFIG = {
   panelSeconds: 20,
   timeZone: "America/New_York",   // RULE (Logan 11/2): clock + "Lists updated" always show Kentucky time, never the viewing device's zone (TV sometimes flipped to Utah)
-  updatedAt: "2026-11-16T15:25:16Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-11-16T16:22:00Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -308,9 +319,9 @@ const CONFIG = {
     {"order": "98987B", "customer": "Moss", "dept": "Paint/Stain", "status": "rush"}
   ],
 
-  // Active KY warranty orders — updated nightly with the EOD run
+  // Active KY warranty orders — updated nightly with the EOD run ([] = celebration slide: 0 production warranties)
   warranties: [
-    {"order": "96523", "issue": "Customer did not receive their black Hillmont 12\" pulls for their beds", "dept": "Packaging", "status": "inprogress", "photo": "warranty-100846.jpg", "photo2": "invoice-96523.jpg", "cap2": "Paperwork: Hillmont Pull 12\", Black", "note": "Paperwork called for black Hillmont 12\" pulls, but none were in the hardware picture. Check the paperwork and verify EVERYTHING the customer ordered is packed with the bed."}
+
   ],
 
   ticker: [
@@ -442,6 +453,22 @@ function buildingPanel(){
     </table>${more}`;
 }
 
+function warrantyZeroPanel(){
+  /* Celebration slide: Logan's weekly warranty review found 0 production-fault (blue) rows */
+  const colors=["#43c463","#ffb300","#4f8cff","#eef1f8","#ef5350"];
+  let conf="";
+  for(let i=0;i<36;i++){
+    conf+=`<i class="conf" style="left:${(i*97)%100}%;background:${colors[i%colors.length]};animation-duration:${4+(i%5)}s;animation-delay:${-((i*0.7)%6).toFixed(1)}s"></i>`;
+  }
+  return `<h2>Warranty check — KY production</h2>
+    <div class="wzero">${conf}
+      <div class="zbig">0</div>
+      <div class="zhead">Production warranties this week</div>
+      <div class="zsub">Nothing came back on us. Every order was built, finished, checked and packed right.</div>
+      <div class="zthanks">Great work, Kentucky — let's keep it at zero</div>
+    </div>`;
+}
+
 function warrantyPanel(idx){
   const badge = s => s==="rush" ? '<span class="badge b-rush">Rush</span>'
     : s==="overdue" ? '<span class="badge b-over">Overdue</span>'
@@ -479,7 +506,7 @@ const PANELS = [
   { id:"dept",     title:"Pile-Ups",         render:deptPanel,       available:()=>CONFIG.deptStats.length>0 },
   { id:"building", title:"Sanding / Assembly", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
   { id:"paint",    title:"Paint Priorities", render:paintPanel,      available:()=>CONFIG.paint.length>0 },
-  { id:"warranty", title:"Warranties",       render:()=>warrantyPanel(0),   available:()=>CONFIG.warranties.length>0 }
+  { id:"warranty", title:"Warranties",       render:()=>CONFIG.warranties.length ? warrantyPanel(0) : warrantyZeroPanel(),   available:()=>true }
 ];
 /* one extra panel per additional photo warranty */
 for(let i=1;i<CONFIG.warranties.length;i++){
