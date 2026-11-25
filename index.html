@@ -208,7 +208,6 @@ const CONFIG = {
 
   /* Dept queue stats + trend vs last EOD run — written by dash_arrays.py */
   deptStats: [
-    {"name": "Sanding", "total": 0, "rush": 0, "overdue": 0},
     {"name": "Assembly", "total": 22, "rush": 0, "overdue": 3},
     {"name": "Paint/Stain", "total": 34, "rush": 4, "overdue": 10},
     {"name": "QA", "total": 7, "rush": 1, "overdue": 4},
@@ -420,7 +419,7 @@ function buildingPanel(){
     </tr>`).join("");
   const more = CONFIG.building.length > MAX
     ? `<div class="more-note">+ ${CONFIG.building.length - MAX} more in queue</div>` : "";
-  return `<h2>Sanding / Assembly — today's order of attack ${trendTag(CONFIG.trends["Sanding/Assembly"])}</h2>
+  return `<h2>Assembly / Addons — today's order of attack ${trendTag(CONFIG.trends["Sanding/Assembly"])}</h2>
     <table>
       <thead><tr><th style="width:5vw">#</th><th>Order #</th><th>Customer</th><th>Dept</th><th>Doors</th><th>Due</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -478,7 +477,7 @@ const PANELS = [
   { id:"numbers",  title:"Daily Numbers",    render:numbersPanel,    available:()=>true },
   { id:"priority", title:"Top Priorities",   render:prioritiesPanel, available:()=>CONFIG.priorities.length>0 },
   { id:"dept",     title:"Pile-Ups",         render:deptPanel,       available:()=>CONFIG.deptStats.length>0 },
-  { id:"building", title:"Sanding / Assembly", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
+  { id:"building", title:"Assembly / Addons", render:buildingPanel,  available:()=>CONFIG.building.length>0 },
   { id:"paint",    title:"Paint Priorities", render:paintPanel,      available:()=>CONFIG.paint.length>0 },
   { id:"warranty", title:"Warranties",       render:()=>CONFIG.warranties.length ? warrantyPanel(0) : warrantyZeroPanel(),   available:()=>true }
 ];
