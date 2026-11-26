@@ -189,7 +189,7 @@
 const CONFIG = {
   panelSeconds: 20,
   timeZone: "America/New_York",   // RULE (Logan 11/2): clock + "Lists updated" always show Kentucky time, never the viewing device's zone (TV sometimes flipped to Utah)
-  updatedAt: "2026-11-25T21:10:11Z",   // set by the EOD routine on every deploy — drives the stale-data warning
+  updatedAt: "2026-11-26T21:09:43Z",   // set by the EOD routine on every deploy — drives the stale-data warning
 
   /* ---- LIVE FEED (Google Sheet Dashboard tab published as CSV) ----
      numbers: Date, Doors, Revenue                                  */
@@ -198,7 +198,7 @@ const CONFIG = {
       numbers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA33cVFITuwmn2jn4JZPJGdxoZCakOsT-1a-pUn0lsYBdKxnq9ycwcw761RsDnD8UPAhQwZ2jJslAv/pub?gid=1044638590&single=true&output=csv"
     },
     pollMinutes: 5,
-    headcount: 14,        // normal headcount is 16 (since 10/21) (reduce for call-ins)
+    headcount: 16,        // normal headcount is 16 (since 10/21) (reduce for call-ins)
     rpeGoal: 4000,        // daily RPE goal
     dpeGoal: 1.9          // daily doors-per-employee goal
   },
@@ -209,13 +209,13 @@ const CONFIG = {
   /* Dept queue stats + trend vs last EOD run — written by dash_arrays.py */
   deptStats: [
     {"name": "Assembly", "total": 20, "rush": 3, "overdue": 2},
-    {"name": "Paint/Stain", "total": 39, "rush": 3, "overdue": 9},
-    {"name": "QA", "total": 11, "rush": 1, "overdue": 4},
+    {"name": "Paint/Stain", "total": 39, "rush": 3, "overdue": 10},
+    {"name": "QA", "total": 11, "rush": 1, "overdue": 5},
     {"name": "Packaging", "total": 11, "rush": 0, "overdue": 4}
   ],
-  trends: {"Assembly": -2, "Paint/Stain": 5, "QA": 4, "Packaging": -5, "Sanding/Assembly": -2},
+  trends: {"Assembly": 0, "Paint/Stain": 0, "QA": 0, "Packaging": 0, "Sanding/Assembly": 0},
   /* Optional extras filled by the EOD routine from real sources only: winOfDay (text), recutsWeek (number) */
-  extras: {"winOfDay": "RPE over $4,000 two days running; Paint/Stain hit goal", "recutsWeek": 12},
+  extras: {},
 
   /* Paint priorities — refreshed nightly from the Trello Paint/Stain list
      during the EOD run, sorted RUSH/overdue first. Empty = panel skipped. */
@@ -232,10 +232,10 @@ const CONFIG = {
     {"order": "99614A", "customer": "Williamson", "finish": "Primer Only", "due": "11/19", "status": "overdue"},
     {"order": "99528A", "customer": "Dillard", "finish": "Stain - Natural", "due": "11/20", "status": "overdue"},
     {"order": "100824A", "customer": "Landis", "finish": "Stain - Walnut", "due": "11/20", "status": "overdue"},
-    {"order": "101757", "customer": "Cloutier", "finish": "Paint - White", "due": "11/25", "status": "today"},
-    {"order": "101558B", "customer": "Short", "finish": "Paint - White", "due": "11/26", "status": ""},
-    {"order": "101910", "customer": "Anderson", "finish": "Paint - Black", "due": "11/26", "status": ""},
-    {"order": "101911", "customer": "Shepler", "finish": "Primer Only", "due": "11/26", "status": ""},
+    {"order": "101757", "customer": "Cloutier", "finish": "Paint - White", "due": "11/25", "status": "overdue"},
+    {"order": "101558B", "customer": "Short", "finish": "Paint - White", "due": "11/26", "status": "today"},
+    {"order": "101910", "customer": "Anderson", "finish": "Paint - Black", "due": "11/26", "status": "today"},
+    {"order": "101911", "customer": "Shepler", "finish": "Primer Only", "due": "11/26", "status": "today"},
     {"order": "100029A", "customer": "Koniarelis", "finish": "Paint - White", "due": "12/2", "status": ""},
     {"order": "99747A", "customer": "Collins", "finish": "Paint - Black", "due": "12/7", "status": ""},
     {"order": "100237", "customer": "Caruso", "finish": "Paint - Black", "due": "12/7", "status": ""},
